@@ -1,0 +1,267 @@
+#%RAML 1.0
+title: Lost and Found Platform
+version: 0.1
+description: RESTful APIs of this platform
+protocols: HTTPS
+
+/user:
+  description: APIs in user mode
+  post:
+    description: Create a user
+    body:
+      application/json:
+        type: Creator
+        example:
+          username: melo
+          email: melo@gaoyuexiang.cn
+          password: my-password
+    responses:
+      400:
+        description: No enough msg to create a user
+        body:
+          application/json:
+            type: Message
+            example:
+              msg: please input all msg
+      409:
+        description: Username or email are used
+        body:
+          application/json:
+            type: Message
+            example:
+              msg: username is used
+      201:
+        description: Accepted request, but need verify email
+        body:
+          application/json:
+            type: Message
+            example:
+              msg: user created
+  /login:
+    description: sign in user or check if sign in
+    post:
+      description: sign in user
+      body:
+        application/json:
+          type: Loginer
+          examples:
+            useName:
+              username: melo
+              password: my-password
+            useMail:
+              email: melo@gaoyuexiang.cn
+              password: my-password
+      responses:
+        201:
+          description: Login success
+          body:
+            application/json:
+              type: Token
+              example:
+                token: my token
+        400:
+          description: Message for login missed
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: password missed
+        401:
+          description: Message for login deny
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: password error
+    /{username}:
+      uriParameters:
+        username:
+          required: true
+      delete:
+        description: logout
+        headers:
+          user-token:
+            type: string
+        responses:
+          200:
+            description: Logout success, refresh html now
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: logout success
+          401:
+            description: Token and username not match
+      get:
+        description: Get user's state of login
+        headers:
+          user-token:
+            type: string
+        responses:
+          200:
+            description: Get state success
+            body:
+              application/json:
+                type: Message
+                examples:
+                  online:
+                    msg: online
+                  offline:
+                    msg: offline
+          401:
+            description: Token and username not match
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: authoriz failed
+          404:
+            description: Username not found
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: user is not exist
+  /info/{username}:
+    uriParameters:
+      username:
+        required: true
+    get:
+      headers:
+        user-token:
+          type: string
+      responses:
+        200:
+          description: Get info success
+          body:
+            application/json:
+              type: UserInfo
+              example:
+                username: melo
+                email: melo@gaoyuexiang.cn
+                tel: tel
+                # need more info
+        404:
+          description: Username not found
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: user is not exist
+        401:
+          description: Token is not match
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: authorize failed
+    put:
+      description: update user's infomation
+      headers:
+        user-token: string
+      body:
+        application/json:
+          type: UserInfo
+          example:
+            username: new name
+            email: new email
+            tel: new tel
+      responses:
+        200:
+          description: update success
+          body:
+            application/json:
+              type: UserInfo
+              example:
+                username: new name
+                email: new email
+                tel: new tel
+        401:
+          description: authorize failed
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: username and token not match
+        404:
+          description: user not found
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: user not found
+  /email/verify:
+    description: apply to verify email
+    put:
+      body:
+        application/json:
+          type: EmailVerifier
+          example:
+            email: melo@gaoyeuxiang.cn
+            token: my token
+      responses:
+        200:
+          description: mail was sent
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: mail was sent
+        400:
+          description: msg is not enough
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: msg is not enough
+        401:
+          description: email and username is not match
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: authorize failed
+        404:
+          description: user is not exist
+          body:
+            application/json:
+              type: Message
+              example:
+                msg: user is not exist
+
+types:
+  Creator:
+    type: object
+    properties:
+      username: string
+      email: string
+      password: string
+  Message:
+    type: object
+    properties:
+      msg: string
+  Loginer:
+    type: object
+    properties:
+      username:
+        type: string
+        required: false
+      email:
+        type: string
+        required: false
+      password: string
+  Token:
+    type: object
+    properties:
+      token: string
+  UserInfo:
+    type: object
+    properties:
+      username: string
+      email: string
+      tel: string
+  EmailVerifier:
+    type: object
+    properties:
+      email: string
+      token: string
