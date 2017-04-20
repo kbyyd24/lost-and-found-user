@@ -4,6 +4,7 @@ import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
 import cn.gaoyuexiang.lostAndFound.model.dto.SignInUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
+import cn.gaoyuexiang.lostAndFound.service.IdCreatorService;
 import cn.gaoyuexiang.lostAndFound.service.PasswordService;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +30,12 @@ public class UserCreatorServiceImplTest {
   @Mock
   private PasswordService passwordService;
 
+  @Mock
+  private IdCreatorService idCreatorService;
+
   @Before
   public void setUp() throws Exception {
-    userCreatorService = new UserCreatorServiceImpl(userRepo, passwordService);
+    userCreatorService = new UserCreatorServiceImpl(userRepo, passwordService, idCreatorService);
   }
 
   @Test

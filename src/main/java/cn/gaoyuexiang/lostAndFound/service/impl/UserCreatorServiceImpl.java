@@ -4,6 +4,7 @@ import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
 import cn.gaoyuexiang.lostAndFound.model.dto.SignInUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
+import cn.gaoyuexiang.lostAndFound.service.IdCreatorService;
 import cn.gaoyuexiang.lostAndFound.service.PasswordService;
 import cn.gaoyuexiang.lostAndFound.service.UserCreatorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,13 @@ public class UserCreatorServiceImpl implements UserCreatorService {
 
   private UserRepo userRepo;
   private PasswordService passwordService;
+  private IdCreatorService idCreatorService;
 
   @Autowired
-  public UserCreatorServiceImpl(UserRepo userRepo, PasswordService passwordService) {
+  public UserCreatorServiceImpl(UserRepo userRepo, PasswordService passwordService, IdCreatorService idCreatorService) {
     this.userRepo = userRepo;
     this.passwordService = passwordService;
+    this.idCreatorService = idCreatorService;
   }
 
   @Override
@@ -39,6 +42,7 @@ public class UserCreatorServiceImpl implements UserCreatorService {
 
   private User buildUser(SignInUser signInUser) {
     User user = new User();
+    user.setId(idCreatorService.create());
     user.setUsername(signInUser.getUsername());
     user.setEmail(signInUser.getEmail());
     user.setEmailEnable(false);
