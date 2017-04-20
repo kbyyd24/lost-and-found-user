@@ -1,20 +1,20 @@
 package cn.gaoyuexiang.lostAndFound.model.dto;
 
 public class Message {
-  private String reason;
+  private String msg;
 
   public Message() {
   }
 
-  public Message(String reason) {
-    this.reason = reason;
+  public Message(String msg) {
+    this.msg = msg;
   }
 
-  public String getReason() {
-    return reason;
+  public String getMsg() {
+    return msg;
   }
 
-  public void setReason(String reason) {
-    this.reason = reason;
+  public void setMsg(String msg) {
+    this.msg = msg;
   }
 }

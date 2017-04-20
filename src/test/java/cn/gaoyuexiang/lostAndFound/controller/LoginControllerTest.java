@@ -5,6 +5,7 @@ import cn.gaoyuexiang.lostAndFound.exception.PasswordNotMatchException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginUser;
+import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.enums.LoginMsg;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import org.junit.Ignore;
@@ -45,15 +46,14 @@ public class LoginControllerTest {
   }
 
   @Test
-  @Ignore
   public void should_return_400_when_given_a_user_without_password() throws Exception {
     when(loginService.login(any(LoginUser.class))).thenThrow(new MissParamException());
     LoginUser loginUser = new LoginUser();
 
-    ResponseEntity<LoginMsg> entity = restTemplate.postForEntity("/user/login", loginUser, LoginMsg.class);
+    ResponseEntity<Message> entity = restTemplate.postForEntity("/user/login", loginUser, Message.class);
 
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
-    assertThat(entity.getBody(), is(LoginMsg.MSG_NOT_COMPLETE));
+    assertThat(entity.getBody().getMsg(), is(LoginMsg.MSG_NOT_COMPLETE.getMsg()));
   }
 
   @Test
