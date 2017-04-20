@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.annotation.UserController;
 import cn.gaoyuexiang.lostAndFound.model.dto.SignInUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg;
 import cn.gaoyuexiang.lostAndFound.service.UserCreatorService;
@@ -18,8 +19,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
 
-@RestController
-@RequestMapping("user")
+@UserController
 public class SignInController {
 
   private UserCreatorService userCreatorService;
