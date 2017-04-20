@@ -20,13 +20,13 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("user")
-public class UserController {
+public class SignInController {
 
   private UserCreatorService userCreatorService;
   private HashMap<CreatorMsg, HttpStatus> creatorStatusMap;
 
   @Autowired
-  public UserController(UserCreatorService userCreatorService) {
+  public SignInController(UserCreatorService userCreatorService) {
     this.userCreatorService = userCreatorService;
     creatorStatusMap = new HashMap<>();
     creatorStatusMap.put(CreatorMsg.SUCCESS, OK);
