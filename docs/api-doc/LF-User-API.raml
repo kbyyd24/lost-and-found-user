@@ -30,7 +30,7 @@ protocols: HTTPS
             type: Message
             example:
               msg: username is used
-      201:
+      200:
         description: Accepted request, but need verify email
         body:
           application/json:
@@ -52,7 +52,7 @@ protocols: HTTPS
               email: melo@gaoyuexiang.cn
               password: my-password
       responses:
-        201:
+        200:
           description: Login success
           body:
             application/json:
