@@ -99,29 +99,26 @@ protocols: HTTPS
             type: string
         responses:
           200:
-            description: Get state success
+            description: user is online
             body:
               application/json:
                 type: Message
-                examples:
-                  online:
-                    msg: online
-                  offline:
-                    msg: offline
+                example:
+                  msg: online
           401:
             description: Token and username not match
             body:
               application/json:
                 type: Message
                 example:
-                  msg: authoriz failed
+                  msg: unauthorized
           404:
-            description: Username not found
+            description: user is offline or user in not exist
             body:
               application/json:
                 type: Message
                 example:
-                  msg: user is not exist
+                  msg: offline
   /info/{username}:
     uriParameters:
       username:
@@ -190,14 +187,17 @@ protocols: HTTPS
               type: Message
               example:
                 msg: user not found
-  /email/verify:
+  /email/verify/{email}:
     description: apply to verify email
+    uriParameters:
+      email:
+        type: string
+        description: user's email
     put:
       body:
         application/json:
-          type: EmailVerifier
+          type: Token
           example:
-            email: melo@gaoyeuxiang.cn
             token: my token
       responses:
         200:
