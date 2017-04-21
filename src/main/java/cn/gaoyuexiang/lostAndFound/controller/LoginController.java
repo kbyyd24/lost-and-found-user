@@ -64,14 +64,14 @@ public class LoginController {
 
   @GetMapping("login/{username}")
   public ResponseEntity<Message> checkState(@PathVariable String username,
-                                            @RequestHeader("user-token") String token) {
+                                            @RequestHeader(name = "user-token", defaultValue = "") String token) {
     String state = loginService.checkState(username, token);
     return new ResponseEntity<>(new Message(state), stateMap.get(state));
   }
 
   @DeleteMapping("login/{username}")
   public ResponseEntity<Message> logout(@PathVariable String username,
-                                        @RequestHeader("user-token") String token) {
+                                        @RequestHeader(value = "user-token", defaultValue = "") String token) {
     String logoutMsg = loginService.logout(username, token);
     return new ResponseEntity<>(new Message(logoutMsg), logoutResMap.get(logoutMsg));
   }
