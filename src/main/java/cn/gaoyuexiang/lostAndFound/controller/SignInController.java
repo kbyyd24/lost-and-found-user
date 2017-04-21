@@ -1,6 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
+import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.SignInUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg;
 import cn.gaoyuexiang.lostAndFound.service.UserCreatorService;
@@ -36,8 +37,8 @@ public class SignInController {
   }
 
   @PostMapping
-  public ResponseEntity<CreatorMsg> signIn(@RequestBody SignInUser signInUser) {
+  public ResponseEntity<Message> signIn(@RequestBody SignInUser signInUser) {
     CreatorMsg creatorMsg = userCreatorService.create(signInUser);
-    return new ResponseEntity<>(creatorMsg, creatorStatusMap.get(creatorMsg));
+    return new ResponseEntity<>(new Message(creatorMsg.getMsg()), creatorStatusMap.get(creatorMsg));
   }
 }

@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.SignInUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg;
 import cn.gaoyuexiang.lostAndFound.service.UserCreatorService;
@@ -32,26 +33,26 @@ public class SignInControllerTest {
   public void should_return_200_when_given_a_valid_user() throws Exception {
     given(userCreatorService.create(any(SignInUser.class))).willReturn(CreatorMsg.SUCCESS);
     SignInUser signInUser = new SignInUser();
-    ResponseEntity<CreatorMsg> entity = restTemplate.postForEntity("/user", signInUser, CreatorMsg.class);
+    ResponseEntity<Message> entity = restTemplate.postForEntity("/user", signInUser, Message.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
-    assertThat(entity.getBody(), is(CreatorMsg.SUCCESS));
+    assertThat(entity.getBody().getMsg(), is(CreatorMsg.SUCCESS.getMsg()));
   }
 
   @Test
   public void should_return_400_when_given_a_user_miss_some_msg() throws Exception {
     given(userCreatorService.create(any(SignInUser.class))).willReturn(CreatorMsg.MSG_NOT_ENOUGH);
     SignInUser signInUser = new SignInUser();
-    ResponseEntity<CreatorMsg> entity = restTemplate.postForEntity("/user", signInUser, CreatorMsg.class);
+    ResponseEntity<Message> entity = restTemplate.postForEntity("/user", signInUser, Message.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
-    assertThat(entity.getBody(), is(CreatorMsg.MSG_NOT_ENOUGH));
+    assertThat(entity.getBody().getMsg(), is(CreatorMsg.MSG_NOT_ENOUGH.getMsg()));
   }
 
   @Test
   public void should_return_409_when_given_a_user_has_existed_username() throws Exception {
     given(userCreatorService.create(any(SignInUser.class))).willReturn(CreatorMsg.USERNAME_EXIST);
     SignInUser signInUser = new SignInUser();
-    ResponseEntity<CreatorMsg> entity = restTemplate.postForEntity("/user", signInUser, CreatorMsg.class);
+    ResponseEntity<Message> entity = restTemplate.postForEntity("/user", signInUser, Message.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.CONFLICT));
-    assertThat(entity.getBody(), is(CreatorMsg.USERNAME_EXIST));
+    assertThat(entity.getBody().getMsg(), is(CreatorMsg.USERNAME_EXIST.getMsg()));
   }
 }
