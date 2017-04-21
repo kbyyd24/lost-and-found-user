@@ -79,7 +79,7 @@ public class LoginServiceImpl implements LoginService {
     Login login = new Login();
     login.setId(id);
     login.setUsername(username);
-    login.setToken(token);
+    login.setToken(passwordService.encode(token));
     login.setLoginTime(loginTime);
     loginRepo.save(login);
     return token;
