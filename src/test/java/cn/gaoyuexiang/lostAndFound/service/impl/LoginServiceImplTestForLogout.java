@@ -49,7 +49,7 @@ public class LoginServiceImplTestForLogout {
   }
 
   @Test
-  public void should_return_unauthorized_when_username_and_token_not_matched() throws Exception {
+  public void should_return_offline_when_username_and_token_not_matched() throws Exception {
     String token = "token";
     String username = "username";
     Login login = Mockito.mock(Login.class);
@@ -59,8 +59,8 @@ public class LoginServiceImplTestForLogout {
 
     String logoutMsg = loginService.logout(username, token);
 
-    String unauthorized = "unauthorized";
-    assertThat(logoutMsg, is(unauthorized));
+    String userNotFound = "user not found";
+    assertThat(logoutMsg, is(userNotFound));
   }
 
   @Test

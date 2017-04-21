@@ -108,7 +108,7 @@ public class LoginServiceImpl implements LoginService {
     }
     boolean isMatch = passwordService.match(token, login.getToken());
     if (!isMatch) {
-      return "unauthorized";
+      return "offline";
     }
     return "online";
   }
@@ -121,7 +121,7 @@ public class LoginServiceImpl implements LoginService {
     }
     boolean isMatch = passwordService.match(token, login.getToken());
     if (!isMatch) {
-      return "unauthorized";
+      return "user not found";
     }
     loginRepo.delete(login);
     return "logout success";

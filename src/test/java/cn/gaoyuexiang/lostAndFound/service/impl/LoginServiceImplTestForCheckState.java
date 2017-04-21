@@ -60,18 +60,18 @@ public class LoginServiceImplTestForCheckState {
   }
 
   @Test
-  public void should_return_unauthorized_when_given_user_with_error_token() throws Exception {
+  public void should_return_offline_when_given_user_with_error_token() throws Exception {
     String username = "username";
     String token = "token";
-    String expectUnauthorized = "unauthorized";
+    String offline = "offline";
     Login login = new Login();
     login.setToken(token);
 
     when(loginRepo.findByUsername(username)).thenReturn(login);
     when(passwordService.match(token, token)).thenReturn(false);
 
-    String unauthorized = loginService.checkState(username, token);
+    String checkStateMsg = loginService.checkState(username, token);
 
-    assertThat(unauthorized, is(expectUnauthorized));
+    assertThat(checkStateMsg, is(offline));
   }
 }
