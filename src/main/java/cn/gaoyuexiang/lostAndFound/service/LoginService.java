@@ -11,4 +11,6 @@ public interface LoginService {
 
   String checkState(String username, String token);
 
+  String logout(String username, String token);
+
 }

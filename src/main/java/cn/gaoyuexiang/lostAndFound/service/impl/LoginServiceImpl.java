@@ -112,4 +112,18 @@ public class LoginServiceImpl implements LoginService {
     return "online";
   }
 
+  @Override
+  public String logout(String username, String token) {
+    Login login = loginRepo.findByUsername(username);
+    if (login == null) {
+      return "user not found";
+    }
+    boolean isMatch = passwordService.match(token, login.getToken());
+    if (!isMatch) {
+      return "unauthorized";
+    }
+    loginRepo.delete(login);
+    return "logout success";
+  }
+
 }
