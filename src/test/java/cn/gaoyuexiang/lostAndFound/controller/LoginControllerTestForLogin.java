@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class LoginControllerTest {
+public class LoginControllerTestForLogin {
 
   @Autowired
   private TestRestTemplate restTemplate;
