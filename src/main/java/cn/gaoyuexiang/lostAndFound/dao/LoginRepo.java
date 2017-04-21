@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LoginRepo extends CrudRepository<Login, String> {
 
-  Login findByUsernameAndToken(String username, String token);
-
   Login findByUsername(String username);
+
 }
