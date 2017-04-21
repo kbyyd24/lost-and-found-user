@@ -68,7 +68,8 @@ public class LoginServiceImpl implements LoginService {
   private String updateOnlineUser(Login onlineUser, long loginTime) {
     String token;
     onlineUser.setLoginTime(loginTime);
-    token = onlineUser.getToken();
+    token = tokenService.buildToken();
+    onlineUser.setToken(passwordService.encode(token));
     loginRepo.save(onlineUser);
     return token;
   }
