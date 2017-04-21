@@ -8,7 +8,6 @@ import cn.gaoyuexiang.lostAndFound.model.dto.LoginUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.enums.LoginMsg;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,26 +56,22 @@ public class LoginControllerTest {
   }
 
   @Test
-  @Ignore
   public void should_return_401_when_given_a_user_not_signed_in() throws Exception {
     given(loginService.login(any(LoginUser.class))).willThrow(new UserNotExistException());
     LoginUser loginUser = new LoginUser();
-
-    ResponseEntity<LoginMsg> entity = restTemplate.postForEntity("/user/login", loginUser, LoginMsg.class);
-
+    ResponseEntity<Message> entity = restTemplate.postForEntity("/user/login", loginUser, Message.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
-    assertThat(entity.getBody(), is(LoginMsg.USERNAME_PASSWORD_NOT_MATCH));
+    assertThat(entity.getBody().getMsg(), is(LoginMsg.USERNAME_PASSWORD_NOT_MATCH.getMsg()));
   }
 
   @Test
-  @Ignore
   public void should_return_401_when_given_a_user_with_error_password() throws Exception {
     given(loginService.login(any(LoginUser.class))).willThrow(new PasswordNotMatchException());
     LoginUser loginUser = new LoginUser();
 
-    ResponseEntity<LoginMsg> entity = restTemplate.postForEntity("/user/login", loginUser, LoginMsg.class);
+    ResponseEntity<Message> entity = restTemplate.postForEntity("/user/login", loginUser, Message.class);
 
     assertThat(entity.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
-    assertThat(entity.getBody(), is(LoginMsg.USERNAME_PASSWORD_NOT_MATCH));
+    assertThat(entity.getBody().getMsg(), is(LoginMsg.USERNAME_PASSWORD_NOT_MATCH.getMsg()));
   }
 }
