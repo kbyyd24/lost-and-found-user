@@ -99,4 +99,17 @@ public class LoginServiceImpl implements LoginService {
     return user;
   }
 
+  @Override
+  public String checkState(String username, String token) {
+    Login login = loginRepo.findByUsername(username);
+    if (login == null) {
+      return "offline";
+    }
+    boolean isMatch = passwordService.match(token, login.getToken());
+    if (!isMatch) {
+      return "unauthorized";
+    }
+    return "online";
+  }
+
 }

@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LoginServiceImplTest {
+public class LoginServiceImplTestForLogin {
 
   private LoginService loginService;
 

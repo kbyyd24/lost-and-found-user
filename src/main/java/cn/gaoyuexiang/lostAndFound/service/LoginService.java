@@ -9,4 +9,6 @@ public interface LoginService {
 
   LoginToken login(LoginUser loginUser);
 
+  String checkState(String username, String token);
+
 }
