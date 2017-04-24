@@ -37,6 +37,16 @@ public class UserInfoServiceImpl implements UserInfoService {
 
   @Override
   public UserInfoDTO getInfo(String username) {
-    return null;
+    UserInfo userInfo = userInfoRepo.findByUsername(username);
+    return buildUserInfoDTO(userInfo);
+  }
+
+  private UserInfoDTO buildUserInfoDTO(UserInfo userInfo) {
+    UserInfoDTO userInfoDTO = new UserInfoDTO();
+    userInfoDTO.setNickName(userInfo.getNickName());
+    userInfoDTO.setAbout(userInfo.getAbout());
+    userInfoDTO.setBlog(userInfo.getBlog());
+    userInfoDTO.setWeiboName(userInfo.getWeiboName());
+    return userInfoDTO;
   }
 }

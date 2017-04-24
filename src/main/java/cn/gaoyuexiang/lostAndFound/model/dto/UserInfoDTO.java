@@ -40,4 +40,27 @@ public class UserInfoDTO {
   public void setBlog(String blog) {
     this.blog = blog;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    UserInfoDTO that = (UserInfoDTO) o;
+
+    if (getNickName() != null ? !getNickName().equals(that.getNickName()) : that.getNickName() != null) return false;
+    if (getAbout() != null ? !getAbout().equals(that.getAbout()) : that.getAbout() != null) return false;
+    if (getWeiboName() != null ? !getWeiboName().equals(that.getWeiboName()) : that.getWeiboName() != null)
+      return false;
+    return getBlog() != null ? getBlog().equals(that.getBlog()) : that.getBlog() == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getNickName() != null ? getNickName().hashCode() : 0;
+    result = 31 * result + (getAbout() != null ? getAbout().hashCode() : 0);
+    result = 31 * result + (getWeiboName() != null ? getWeiboName().hashCode() : 0);
+    result = 31 * result + (getBlog() != null ? getBlog().hashCode() : 0);
+    return result;
+  }
 }
