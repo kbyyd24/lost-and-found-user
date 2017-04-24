@@ -8,9 +8,7 @@ import cn.gaoyuexiang.lostAndFound.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 @UserController
 public class UserInfoController {
@@ -35,5 +33,14 @@ public class UserInfoController {
     }
     String info = userInfoService.createInfo(userInfo, username);
     return new ResponseEntity<>(new Message(info), HttpStatus.OK);
+  }
+
+  @GetMapping(path = "info/{username}")
+  public ResponseEntity<?> getInfo(@PathVariable("username") String username) {
+    UserInfoDTO info = userInfoService.getInfo(username);
+    if (info == null) {
+      return new ResponseEntity<>(new Message("not found"), HttpStatus.NOT_FOUND);
+    }
+    return new ResponseEntity<>(info, HttpStatus.OK);
   }
 }
