@@ -23,6 +23,12 @@ public class UserInfoController {
     this.userInfoService = userInfoService;
   }
 
+  @PutMapping(path = "info/{username}", headers = "user-token")
+  public ResponseEntity<Message> updateInfo(@RequestBody UserInfoDTO userInfoDTO,
+                                            @PathVariable("username") String username,
+                                            @RequestHeader("user-token") String token) {
+    return this.addInfo(userInfoDTO, username, token);
+  }
   @PostMapping(path = "info", headers = {"username", "user-token"})
   public ResponseEntity<Message> addInfo(@RequestBody UserInfoDTO userInfo,
                                          @RequestHeader("username") String username,
