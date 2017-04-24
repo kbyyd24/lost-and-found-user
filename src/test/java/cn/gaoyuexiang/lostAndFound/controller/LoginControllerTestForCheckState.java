@@ -48,7 +48,6 @@ public class LoginControllerTestForCheckState {
   }
 
   @Test
-  @Ignore
   public void should_response_401_when_token_is_not_match() throws Exception {
     String unauthorized = "unauthorized";
     String token = "token";

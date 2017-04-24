@@ -35,7 +35,6 @@ public class LoginControllerTestForLogout {
   }
 
   @Test
-  @Ignore
   public void should_response_401_when_token_not_match() throws Exception {
     String unauthorized = "unauthorized";
     check(unauthorized, HttpStatus.UNAUTHORIZED);
