@@ -1,7 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.UserInfoRepo;
-import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.model.persistence.UserInfo;
 import cn.gaoyuexiang.lostAndFound.service.IdCreatorService;
@@ -25,12 +24,9 @@ public class UserInfoServiceImplTestForCreateInfo {
   @Mock
   private UserInfoRepo userInfoRepo;
 
-  @Mock
-  private IdCreatorService idCreatorService;
-
   @Before
   public void setUp() throws Exception {
-    userInfoService = new UserInfoServiceImpl(userInfoRepo, idCreatorService);
+    userInfoService = new UserInfoServiceImpl(userInfoRepo);
   }
 
   @Test

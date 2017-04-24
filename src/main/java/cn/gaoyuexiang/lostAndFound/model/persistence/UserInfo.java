@@ -9,10 +9,7 @@ import javax.persistence.Table;
 @Table(name = "user_info")
 public class UserInfo {
 
-  @Id
-  private String id;
-
-  @Column(unique = true)
+  @Id @Column(unique = true)
   private String username;
 
   private String about;
@@ -26,14 +23,6 @@ public class UserInfo {
   private String blog;
 
   public UserInfo() {
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public String getUsername() {

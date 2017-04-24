@@ -12,12 +12,10 @@ import org.springframework.stereotype.Service;
 public class UserInfoServiceImpl implements UserInfoService {
 
   private UserInfoRepo userInfoRepo;
-  private IdCreatorService idCreatorService;
 
   @Autowired
-  public UserInfoServiceImpl(UserInfoRepo userInfoRepo, IdCreatorService idCreatorService) {
+  public UserInfoServiceImpl(UserInfoRepo userInfoRepo) {
     this.userInfoRepo = userInfoRepo;
-    this.idCreatorService = idCreatorService;
   }
 
   @Override
@@ -29,7 +27,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
   private UserInfo buildUserInfo(UserInfoDTO userInfoDTO, String username) {
     UserInfo userInfo = new UserInfo();
-    userInfo.setId(idCreatorService.create());
     userInfo.setUsername(username);
     userInfo.setNickName(userInfoDTO.getNickName());
     userInfo.setAbout(userInfoDTO.getAbout());
