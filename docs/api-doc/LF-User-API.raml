@@ -148,9 +148,6 @@ protocols: HTTPS
         username:
           required: true
       get:
-        headers:
-          user-token:
-            type: string
         responses:
           200:
             description: Get info success
@@ -169,13 +166,6 @@ protocols: HTTPS
                 type: Message
                 example:
                   msg: user is not exist
-          401:
-            description: Token is not match
-            body:
-              application/json:
-                type: Message
-                example:
-                  msg: authorize failed
       put:
         description: update user's infomation
         headers:
@@ -213,47 +203,117 @@ protocols: HTTPS
                 type: Message
                 example:
                   msg: user not found
-  /email/verify/{email}:
-    description: apply to verify email
+      /security:
+        description: username, email, email-enable etc.
+        get:
+          headers:
+            user-token: string
+          description: get security info
+          responses:
+            200:
+              description: get info success
+              body:
+                application/json:
+                  type: SecurityUserInfo
+                  example:
+                    username: username
+                    email: email
+                    emailEnable: false
+            401:
+              description: username and token not match, or username is not exist
+              body:
+                application/json:
+                  type: Message
+                  example:
+                    msg: unauzhorized
+        put:
+          description: update security info
+          headers:
+            user-token: string
+          responses:
+            200:
+              description: update success
+              body:
+                application/json:
+                  type: Message
+                  example:
+                    msg: update success
+            401:
+              description: username and token not match, or username is not exist
+              body:
+                application/json:
+                  type: Message
+                  example:
+                    msg: unauthorized
+  /email/{email}/:
     uriParameters:
       email:
         type: string
         description: user's email
-    put:
-      body:
-        application/json:
-          type: Token
-          example:
-            token: my token
-      responses:
-        200:
-          description: mail was sent
+    /verification:
+      put:
+        description: verify email
+        headers:
+          username: string
+          user-token: string
+        body:
+          application/json:
+            type: Token
+            example:
+              token: token for verify
+        responses:
+          200:
+            description: verify success
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: verify success
+          401:
+            description: email, username, user-token and email-token, any of them out match
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: unauthorized
+      /application:
+        description: apply to verify email
+        put:
           body:
             application/json:
-              type: Message
+              type: Token
+              description: token returned when login
               example:
-                msg: mail was sent
-        400:
-          description: msg is not enough
-          body:
-            application/json:
-              type: Message
-              example:
-                msg: msg is not enough
-        401:
-          description: email and username is not match
-          body:
-            application/json:
-              type: Message
-              example:
-                msg: authorize failed
-        404:
-          description: user is not exist
-          body:
-            application/json:
-              type: Message
-              example:
-                msg: user is not exist
+                token: my token
+          responses:
+            200:
+              description: mail was sent
+              body:
+                application/json:
+                  type: Message
+                  example:
+                    msg: mail was sent
+            400:
+              description: msg is not enough
+              body:
+                application/json:
+                  type: Message
+                  example:
+                    msg: msg is not enough
+            401:
+              description: email and username is not match
+              body:
+                application/json:
+                  type: Message
+                  example:
+                    msg: authorize failed
+            404:
+              description: user is not exist
+              body:
+                application/json:
+                  type: Message
+                  example:
+                    msg: user is not exist
 
 types:
   Creator:
@@ -292,3 +352,9 @@ types:
     properties:
       email: string
       token: string
+  SecurityUserInfo:
+    type: object
+    properties:
+      username: string
+      email: string
+      emailEnable: boolean
