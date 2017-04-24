@@ -119,74 +119,100 @@ protocols: HTTPS
                 type: Message
                 example:
                   msg: offline
-  /info/{username}:
-    uriParameters:
-      username:
-        required: true
-    get:
+  /info:
+    post:
+      description: create user information
       headers:
-        user-token:
-          type: string
-      responses:
-        200:
-          description: Get info success
-          body:
-            application/json:
-              type: UserInfo
-              example:
-                username: melo
-                email: melo@gaoyuexiang.cn
-                tel: tel
-                # need more info
-        404:
-          description: Username not found
-          body:
-            application/json:
-              type: Message
-              example:
-                msg: user is not exist
-        401:
-          description: Token is not match
-          body:
-            application/json:
-              type: Message
-              example:
-                msg: authorize failed
-    put:
-      description: update user's infomation
-      headers:
+        username: string
         user-token: string
       body:
         application/json:
           type: UserInfo
-          example:
-            username: new name
-            email: new email
-            tel: new tel
       responses:
         200:
-          description: update success
+          description: create success
           body:
             application/json:
-              type: UserInfo
+              type: Message
               example:
-                username: new name
-                email: new email
-                tel: new tel
+                msg: success
         401:
-          description: authorize failed
+          description: unauthorized
           body:
             application/json:
               type: Message
               example:
-                msg: username and token not match
-        404:
-          description: user not found
-          body:
-            application/json:
-              type: Message
-              example:
-                msg: user not found
+                msg: unauthorized
+    /{username}:
+      uriParameters:
+        username:
+          required: true
+      get:
+        headers:
+          user-token:
+            type: string
+        responses:
+          200:
+            description: Get info success
+            body:
+              application/json:
+                type: UserInfo
+                example:
+                  nickName: nick
+                  about: about me
+                  weiboName: wei
+                  blog: b
+          404:
+            description: Username not found
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: user is not exist
+          401:
+            description: Token is not match
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: authorize failed
+      put:
+        description: update user's infomation
+        headers:
+          user-token: string
+        body:
+          application/json:
+            type: UserInfo
+            example:
+              nickName: nick
+              about: about me
+              weiboName: wei
+              blog: b
+        responses:
+          200:
+            description: update success
+            body:
+              application/json:
+                type: UserInfo
+                example:
+                  nickName: nick
+                  about: about me
+                  weiboName: wei
+                  blog: b
+          401:
+            description: authorize failed
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: username and token not match
+          404:
+            description: user not found
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: user not found
   /email/verify/{email}:
     description: apply to verify email
     uriParameters:
@@ -257,9 +283,10 @@ types:
   UserInfo:
     type: object
     properties:
-      username: string
-      email: string
-      tel: string
+      nickName: string
+      about: string
+      weiboName: string
+      blog: string
   EmailVerifier:
     type: object
     properties:
