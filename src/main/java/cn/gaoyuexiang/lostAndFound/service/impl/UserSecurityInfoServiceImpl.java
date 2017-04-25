@@ -1,6 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.model.dto.SecurityInfoUpdater;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserSecurityInfo;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
 import cn.gaoyuexiang.lostAndFound.service.UserSecurityInfoService;
@@ -35,7 +36,15 @@ public class UserSecurityInfoServiceImpl implements UserSecurityInfoService {
   }
 
   @Override
-  public String updateInfo(UserSecurityInfo updateUser) {
-    return null;
+  public String updateInfo(SecurityInfoUpdater updater, String username) {
+    User user = userRepo.findByUsername(username);
+    if (updater.getEmail().equals(user.getEmail())) {
+      return "success";
+    }
+    user.setEmail(updater.getEmail());
+    user.setEmailEnable(false);
+    userRepo.save(user);
+    return "success";
   }
+
 }
