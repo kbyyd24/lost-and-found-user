@@ -2,15 +2,17 @@ package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
+import cn.gaoyuexiang.lostAndFound.model.dto.SecurityInfoUpdater;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserSecurityInfo;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import cn.gaoyuexiang.lostAndFound.service.UserSecurityInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @UserController
 public class UserSecurityInfoController {
@@ -30,9 +32,22 @@ public class UserSecurityInfoController {
                                    @RequestHeader("user-token") String token) {
     String userState = loginService.checkState(username, token);
     if (userState.equals("offline")) {
-      return new ResponseEntity<>(new Message("unauthorized"), HttpStatus.UNAUTHORIZED);
+      return new ResponseEntity<>(new Message("unauthorized"), UNAUTHORIZED);
     }
     UserSecurityInfo info = userSecurityInfoService.getInfo(username);
     return new ResponseEntity<>(info, HttpStatus.OK);
   }
+
+  @PutMapping(path = "info/{username}/security", headers = "user-token")
+  public ResponseEntity<Message> updateInfo(@RequestBody SecurityInfoUpdater updater,
+                                      @PathVariable("username") String username,
+                                      @RequestHeader("user-token") String token) {
+    String userState = loginService.checkState(username, token);
+    if (userState.equals("offline")) {
+      return new ResponseEntity<>(new Message("unauthorized"), UNAUTHORIZED);
+    }
+    String result = userSecurityInfoService.updateInfo(updater, username);
+    return new ResponseEntity<>(new Message(result), OK);
+  }
+
 }
