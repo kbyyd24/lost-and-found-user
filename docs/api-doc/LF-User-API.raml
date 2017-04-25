@@ -230,6 +230,9 @@ protocols: HTTPS
           description: update security info
           headers:
             user-token: string
+          body:
+            application/json:
+              type: SecurityInfoUpdater
           responses:
             200:
               description: update success
@@ -358,3 +361,7 @@ types:
       username: string
       email: string
       emailEnable: boolean
+  SecurityInfoUpdater:
+    type: object
+    properties:
+      email: string
