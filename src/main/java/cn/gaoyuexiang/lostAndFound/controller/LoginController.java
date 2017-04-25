@@ -62,14 +62,14 @@ public class LoginController {
     return new Message(USERNAME_PASSWORD_NOT_MATCH.getMsg());
   }
 
-  @GetMapping("login/{username}")
+  @GetMapping(value = "login/{username}", headers = "user-token")
   public ResponseEntity<Message> checkState(@PathVariable String username,
                                             @RequestHeader(name = "user-token", defaultValue = "") String token) {
     String state = loginService.checkState(username, token);
     return new ResponseEntity<>(new Message(state), stateMap.get(state));
   }
 
-  @DeleteMapping("login/{username}")
+  @DeleteMapping(value = "login/{username}", headers = "user-token")
   public ResponseEntity<Message> logout(@PathVariable String username,
                                         @RequestHeader(value = "user-token", defaultValue = "") String token) {
     String logoutMsg = loginService.logout(username, token);
