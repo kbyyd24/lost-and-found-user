@@ -282,12 +282,8 @@ protocols: HTTPS
       /application:
         description: apply to verify email
         put:
-          body:
-            application/json:
-              type: Token
-              description: token returned when login
-              example:
-                token: my token
+          headers:
+            user-token: string
           responses:
             200:
               description: mail was sent
