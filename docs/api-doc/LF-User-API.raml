@@ -279,6 +279,13 @@ protocols: HTTPS
                 type: Message
                 example:
                   msg: unauthorized
+          410:
+            description: email-token expired
+            body:
+              application/json:
+                type: Message
+                example:
+                  msg: token expired
       /application:
         description: apply to verify email
         put:
