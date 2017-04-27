@@ -65,4 +65,26 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     emailService.send(email, emailText);
     return "success";
   }
+
+  @Override
+  public String verify(String username, String userToken, String email, String verifyToken) {
+    String userState = loginService.checkState(username, userToken);
+    if (userState.equals("offline")) {
+      return "unauthorized";
+    }
+    EmailVerifier emailVerifier = emailVerifierRepo.findByEmail(email);
+    if (emailVerifier.getCreateTime() + 30 * 60 * 1000 - System.currentTimeMillis() < 0) {
+      return "timeout";
+    }
+    boolean isMatch = passwordService.match(verifyToken, emailVerifier.getToken());
+    if (!isMatch) {
+      return "unauthorized";
+    }
+    if (!userRepo.findByUsername(username).getEmail().equals(email)) {
+      return "unauthorized";
+    }
+    userRepo.enableEmailByUsername(username);
+    emailVerifierRepo.delete(emailVerifier);
+    return "success";
+  }
 }
