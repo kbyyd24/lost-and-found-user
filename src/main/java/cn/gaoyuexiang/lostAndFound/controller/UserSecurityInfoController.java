@@ -1,6 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.SecurityInfoUpdater;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserSecurityInfo;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -30,8 +32,8 @@ public class UserSecurityInfoController {
   @GetMapping(path = "info/{username}/security", headers = "user-token")
   public ResponseEntity<?> getInfo(@PathVariable("username") String username,
                                    @RequestHeader("user-token") String token) {
-    String userState = loginService.checkState(username, token);
-    if (userState.equals("offline")) {
+    UserState userState = loginService.checkState(username, token);
+    if (userState.equals(OFFLINE)) {
       return new ResponseEntity<>(new Message("unauthorized"), UNAUTHORIZED);
     }
     UserSecurityInfo info = userSecurityInfoService.getInfo(username);
@@ -42,8 +44,8 @@ public class UserSecurityInfoController {
   public ResponseEntity<Message> updateInfo(@RequestBody SecurityInfoUpdater updater,
                                       @PathVariable("username") String username,
                                       @RequestHeader("user-token") String token) {
-    String userState = loginService.checkState(username, token);
-    if (userState.equals("offline")) {
+    UserState userState = loginService.checkState(username, token);
+    if (userState.equals(OFFLINE)) {
       return new ResponseEntity<>(new Message("unauthorized"), UNAUTHORIZED);
     }
     String result = userSecurityInfoService.updateInfo(updater, username);

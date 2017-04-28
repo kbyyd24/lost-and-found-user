@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.LoginRepo;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.exception.MissParamException;
 import cn.gaoyuexiang.lostAndFound.exception.PasswordNotMatchException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
@@ -18,6 +19,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.function.Function;
+
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.UNAUTHORIZED;
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -99,16 +104,16 @@ public class LoginServiceImpl implements LoginService {
   }
 
   @Override
-  public String checkState(String username, String token) {
+  public UserState checkState(String username, String token) {
     Login login = loginRepo.findByUsername(username);
     if (login == null) {
-      return "offline";
+      return OFFLINE;
     }
     boolean isMatch = passwordService.match(token, login.getToken());
     if (!isMatch) {
-      return "offline";
+      return UNAUTHORIZED;
     }
-    return "online";
+    return ONLINE;
   }
 
   @Override

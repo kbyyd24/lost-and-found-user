@@ -1,6 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.exception.MissParamException;
 import cn.gaoyuexiang.lostAndFound.exception.PasswordNotMatchException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
@@ -19,13 +20,15 @@ import java.util.Map;
 
 import static cn.gaoyuexiang.lostAndFound.enums.LoginMsg.MSG_NOT_COMPLETE;
 import static cn.gaoyuexiang.lostAndFound.enums.LoginMsg.USERNAME_PASSWORD_NOT_MATCH;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.springframework.http.HttpStatus.*;
 
 @UserController
 public class LoginController {
 
   private LoginService loginService;
-  private Map<String, HttpStatus> stateMap;
+  private Map<UserState, HttpStatus> stateMap;
   private Map<String, HttpStatus> logoutResMap;
 
   @Autowired
@@ -33,9 +36,9 @@ public class LoginController {
     this.loginService = loginService;
 
     stateMap = new HashMap<>();
-    stateMap.put("online", OK);
-    stateMap.put("offline", NOT_FOUND);
-    stateMap.put("unauthorized", UNAUTHORIZED);
+    stateMap.put(ONLINE, OK);
+    stateMap.put(OFFLINE, NOT_FOUND);
+    stateMap.put(UserState.UNAUTHORIZED, UNAUTHORIZED);
 
     logoutResMap = new HashMap<>();
     logoutResMap.put("logout success", OK);
@@ -63,8 +66,8 @@ public class LoginController {
   @GetMapping(value = "login/{username}", headers = "user-token")
   public ResponseEntity<Message> checkState(@PathVariable String username,
                                             @RequestHeader(name = "user-token", defaultValue = "") String token) {
-    String state = loginService.checkState(username, token);
-    return new ResponseEntity<>(new Message(state), stateMap.get(state));
+    UserState state = loginService.checkState(username, token);
+    return new ResponseEntity<>(new Message(state.name()), stateMap.get(state));
   }
 
   @DeleteMapping(value = "login/{username}", headers = "user-token")

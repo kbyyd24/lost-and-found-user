@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.SecurityInfoUpdater;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -45,9 +47,8 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
     updater.setEmail(email);
     HttpEntity<SecurityInfoUpdater> requestEntity = new HttpEntity<>(updater, httpHeaders);
 
-    String userState = "online";
     String updateState = "success";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(userState);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
     given(userSecurityInfoService.updateInfo(any(SecurityInfoUpdater.class), eq(username)))
         .willReturn(updateState);
 
@@ -70,8 +71,7 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
     updater.setEmail(email);
     HttpEntity<SecurityInfoUpdater> requestEntity = new HttpEntity<>(updater, httpHeaders);
 
-    String userState = "offline";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(userState);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.OFFLINE);
 
     ResponseEntity<Message> entity =
         restTemplate.exchange(path, HttpMethod.PUT, requestEntity, Message.class);

@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.LoginRepo;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.persistence.Login;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import cn.gaoyuexiang.lostAndFound.service.PasswordService;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -32,48 +34,41 @@ public class LoginServiceImplTestForCheckState {
 
   private String username;
   private String token;
-  private String userState;
+  private UserState userState;
 
   @Before
   public void setUp() throws Exception {
     username = "username";
     token = "token";
-    userState = "offline";
   }
 
   @Test
   public void should_return_online_when_user_is_online() throws Exception {
-    userState = "online";
+    userState = ONLINE;
     Login login = new Login();
     login.setToken(token);
-
     when(loginRepo.findByUsername(username)).thenReturn(login);
     when(passwordService.match(token, token)).thenReturn(true);
-
-    String online = loginService.checkState(username, token);
-
-    assertThat(online, is(userState));
+    UserState userState = loginService.checkState(username, token);
+    assertThat(userState, is(this.userState));
   }
 
   @Test
   public void should_return_offline_when_user_is_offline() throws Exception {
+    this.userState = OFFLINE;
     when(loginRepo.findByUsername(username)).thenReturn(null);
-
-    String offline = loginService.checkState(username, token);
-
-    assertThat(offline, is(userState));
+    UserState userState = loginService.checkState(username, token);
+    assertThat(userState, is(this.userState));
   }
 
   @Test
-  public void should_return_offline_when_given_user_with_error_token() throws Exception {
+  public void should_return_unauthorized_when_given_user_with_error_token() throws Exception {
+    this.userState = UNAUTHORIZED;
     Login login = new Login();
     login.setToken(token);
-
     when(loginRepo.findByUsername(username)).thenReturn(login);
     when(passwordService.match(token, token)).thenReturn(false);
-
-    String checkStateMsg = loginService.checkState(username, token);
-
-    assertThat(checkStateMsg, is(userState));
+    UserState userState = loginService.checkState(username, token);
+    assertThat(userState, is(this.userState));
   }
 }

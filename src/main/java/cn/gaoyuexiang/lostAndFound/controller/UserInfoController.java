@@ -1,6 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
@@ -33,9 +34,11 @@ public class UserInfoController {
   public ResponseEntity<Message> addInfo(@RequestBody UserInfoDTO userInfo,
                                          @RequestHeader("username") String username,
                                          @RequestHeader("user-token") String token) {
-    String state = loginService.checkState(username, token);
-    if (state.equals("offline")) {
-      return new ResponseEntity<>(new Message("unauthorized"), HttpStatus.UNAUTHORIZED);
+    UserState userState = loginService.checkState(username, token);
+    if (userState.equals(UserState.UNAUTHORIZED)) {
+      return new ResponseEntity<>(new Message(userState.name()), HttpStatus.UNAUTHORIZED);
+    } else if (userState.equals(UserState.OFFLINE)) {
+      return new ResponseEntity<>(new Message(userState.name()), HttpStatus.NOT_FOUND);
     }
     String info = userInfoService.createInfo(userInfo, username);
     return new ResponseEntity<>(new Message(info), HttpStatus.OK);

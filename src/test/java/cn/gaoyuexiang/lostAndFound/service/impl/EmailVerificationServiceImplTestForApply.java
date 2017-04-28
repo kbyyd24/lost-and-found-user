@@ -3,6 +3,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.EmailVerifierRepo;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.persistence.EmailVerifier;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
 import cn.gaoyuexiang.lostAndFound.service.*;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
@@ -78,8 +81,7 @@ public class EmailVerificationServiceImplTestForApply {
 
     when(userRepo.findByEmail(email)).thenReturn(user);
 
-    String userState = "online";
-    when(loginService.checkState(username, token)).thenReturn(userState);
+    when(loginService.checkState(username, token)).thenReturn(ONLINE);
 
     when(idCreatorService.create()).thenReturn("id");
     when(tokenService.buildToken()).thenReturn(token);
@@ -111,7 +113,7 @@ public class EmailVerificationServiceImplTestForApply {
     User user = mock(User.class);
     when(user.getUsername()).thenReturn(username);
     when(userRepo.findByEmail(email)).thenReturn(user);
-    when(loginService.checkState(username, token)).thenReturn("offline");
+    when(loginService.checkState(username, token)).thenReturn(OFFLINE);
     String result = emailVerificationService.apply(email, token);
     assertThat(result, is("unauthorized"));
   }

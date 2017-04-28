@@ -3,6 +3,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.EmailVerifierRepo;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.persistence.EmailVerifier;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
 import cn.gaoyuexiang.lostAndFound.service.*;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyString;
@@ -76,7 +79,7 @@ public class EmailVerificationServiceImplTestForVerify {
   public void should_return_success_when_verify_success() throws Exception {
     String encodedVerifyToken = "encoded verify token";
     long createTime = System.currentTimeMillis();
-    when(loginService.checkState(username, userToken)).thenReturn("online");
+    when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
     EmailVerifier emailVerifier = mock(EmailVerifier.class);
     when(emailVerifier.getToken()).thenReturn(encodedVerifyToken);
     when(emailVerifier.getCreateTime()).thenReturn(createTime);
@@ -92,7 +95,7 @@ public class EmailVerificationServiceImplTestForVerify {
 
   @Test
   public void should_return_unauthorized_when_user_is_offline() throws Exception {
-    when(loginService.checkState(username, userToken)).thenReturn("offline");
+    when(loginService.checkState(username, userToken)).thenReturn(OFFLINE);
     String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
     assertThat(verifyResult, is("unauthorized"));
   }
@@ -101,7 +104,7 @@ public class EmailVerificationServiceImplTestForVerify {
   public void should_return_timeout_when_verify_time_too_late() throws Exception {
     long createTime = 1L;
     EmailVerifier mockVerifier = mock(EmailVerifier.class);
-    when(loginService.checkState(username, userToken)).thenReturn("online");
+    when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
     when(emailVerifierRepo.findByEmail(email)).thenReturn(mockVerifier);
     when(mockVerifier.getCreateTime()).thenReturn(createTime);
     String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
@@ -117,7 +120,7 @@ public class EmailVerificationServiceImplTestForVerify {
     User user = mock(User.class);
     when(user.getEmail()).thenReturn(anotherEmail);
 
-    when(loginService.checkState(username, userToken)).thenReturn("online");
+    when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
     when(emailVerifierRepo.findByEmail(email)).thenReturn(emailVerifier);
     when(passwordService.match(anyString(), anyString())).thenReturn(true);
     when(userRepo.findByUsername(username)).thenReturn(user);

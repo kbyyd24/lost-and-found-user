@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
@@ -13,12 +14,15 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -40,20 +44,27 @@ public class UserInfoControllerTestForAdd {
     String success = "success";
     String username = "username";
     String token = "token";
-    String online = "online";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(online);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
     given(userInfoService.createInfo(any(UserInfoDTO.class), anyString())).willReturn(success);
     check(username, token, success, OK);
   }
 
   @Test
-  public void should_return_401_when_user_is_offline() throws Exception {
-    String offline = "offline";
+  public void should_return_401_when_token_not_match() throws Exception {
     String username = "username";
     String token = "token";
-    String unauthorized = "unauthorized";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(offline);
+    String unauthorized = "UNAUTHORIZED";
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.UNAUTHORIZED);
     check(username, token, unauthorized, UNAUTHORIZED);
+  }
+
+  @Test
+  public void should_return_404_when_user_is_offline() throws Exception {
+    String username = "username";
+    String token = "token";
+    String message = "OFFLINE";
+    given(loginService.checkState(eq(username), eq(token))).willReturn(OFFLINE);
+    check(username, token, message, NOT_FOUND);
   }
 
   private void check(String username, String token, String message, HttpStatus status) {

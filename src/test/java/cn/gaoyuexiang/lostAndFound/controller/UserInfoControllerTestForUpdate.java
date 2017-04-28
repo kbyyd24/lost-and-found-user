@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -41,19 +44,17 @@ public class UserInfoControllerTestForUpdate {
     String success = "success";
     String username = "username";
     String token = "token";
-    String online = "online";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(online);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
     given(userInfoService.createInfo(any(UserInfoDTO.class), anyString())).willReturn(success);
     check(username, token, success, OK);
   }
 
   @Test
   public void should_return_401_when_user_is_offline() throws Exception {
-    String offline = "offline";
     String username = "username";
     String token = "token";
-    String unauthorized = "unauthorized";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(offline);
+    String unauthorized = "UNAUTHORIZED";
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.UNAUTHORIZED);
     check(username, token, unauthorized, UNAUTHORIZED);
   }
 

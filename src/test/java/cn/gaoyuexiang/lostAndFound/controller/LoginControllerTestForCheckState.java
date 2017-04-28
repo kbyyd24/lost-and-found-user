@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import org.junit.Ignore;
@@ -31,10 +32,10 @@ public class LoginControllerTestForCheckState {
 
   @Test
   public void should_response_200_when_user_is_online() throws Exception {
-    String online = "online";
+    String online = "ONLINE";
     String token = "token";
     String username = "username";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(online);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.ONLINE);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("user-token", token);
     HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
@@ -49,10 +50,10 @@ public class LoginControllerTestForCheckState {
 
   @Test
   public void should_response_401_when_token_is_not_match() throws Exception {
-    String unauthorized = "unauthorized";
+    String unauthorized = "UNAUTHORIZED";
     String token = "token";
     String username = "username";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(unauthorized);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.UNAUTHORIZED);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("user-token", token);
     HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
@@ -67,10 +68,10 @@ public class LoginControllerTestForCheckState {
 
   @Test
   public void should_response_404_when_user_is_offline() throws Exception {
-    String offline = "offline";
+    String offline = "OFFLINE";
     String token = "token";
     String username = "username";
-    given(loginService.checkState(eq(username), eq(token))).willReturn(offline);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.OFFLINE);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("user-token", token);
     HttpEntity<Object> httpEntity = new HttpEntity<>(httpHeaders);

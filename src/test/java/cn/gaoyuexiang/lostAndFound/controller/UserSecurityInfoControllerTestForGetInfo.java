@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserSecurityInfo;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -35,7 +38,6 @@ public class UserSecurityInfoControllerTestForGetInfo {
   @Test
   public void should_return_200_when_get_info_success() throws Exception {
     String username = "username";
-    String userState = "online";
     String token = "token";
     String path = String.format(URL_FORMAT, username);
     HttpHeaders httpHeaders = new HttpHeaders();
@@ -43,7 +45,7 @@ public class UserSecurityInfoControllerTestForGetInfo {
     HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
     UserSecurityInfo expectInfo = new UserSecurityInfo();
     
-    given(loginService.checkState(eq(username), eq(token))).willReturn(userState);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
     given(securityInfoService.getInfo(eq(username))).willReturn(expectInfo);
     
     ResponseEntity<UserSecurityInfo> entity = 
@@ -56,14 +58,13 @@ public class UserSecurityInfoControllerTestForGetInfo {
   @Test
   public void should_return_401_when_user_is_offline() throws Exception {
     String username = "username";
-    String userState = "offline";
     String token = "token";
     String path = String.format(URL_FORMAT, username);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("user-token", token);
     HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
 
-    given(loginService.checkState(eq(username), eq(token))).willReturn(userState);
+    given(loginService.checkState(eq(username), eq(token))).willReturn(OFFLINE);
 
     ResponseEntity<Message> entity =
         restTemplate.exchange(path, HttpMethod.GET, requestEntity, Message.class);

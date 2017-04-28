@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.EmailVerifierRepo;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.persistence.EmailVerifier;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
 import cn.gaoyuexiang.lostAndFound.service.*;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.time.LocalTime;
+
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
 
 @Service
 public class EmailVerificationServiceImpl implements EmailVerificationService {
@@ -48,8 +51,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     if (user == null) {
       return "user not found";
     }
-    String userState = loginService.checkState(user.getUsername(), token);
-    if (userState.equals("offline")) {
+    UserState userState = loginService.checkState(user.getUsername(), token);
+    if (userState.equals(OFFLINE)) {
       return "unauthorized";
     }
     String emailToken = tokenService.buildToken();
@@ -68,8 +71,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
   @Override
   public String verify(String username, String userToken, String email, String verifyToken) {
-    String userState = loginService.checkState(username, userToken);
-    if (userState.equals("offline")) {
+    UserState userState = loginService.checkState(username, userToken);
+    if (userState.equals(OFFLINE)) {
       return "unauthorized";
     }
     EmailVerifier emailVerifier = emailVerifierRepo.findByEmail(email);
