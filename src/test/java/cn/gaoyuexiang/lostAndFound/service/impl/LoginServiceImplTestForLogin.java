@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -44,14 +45,6 @@ public class LoginServiceImplTestForLogin {
 
   @MockBean
   private TokenService tokenService;
-
-  @MockBean
-  private IdCreatorService idCreatorService;
-
-  @Before
-  public void setUp() throws Exception {
-    loginService = new LoginServiceImpl(loginRepo, userRepo, passwordService, tokenService, idCreatorService);
-  }
 
   @Test(expected = MissParamException.class)
   public void should_throw_MissParamException_when_given_a_loginUser_miss_password() throws Exception {
@@ -75,17 +68,18 @@ public class LoginServiceImplTestForLogin {
 
   @Test(expected = PasswordNotMatchException.class)
   public void should_throw_PasswordNotMatchException_when_given_a_loginUser_with_error_password() throws Exception {
-    LoginUser loginUser = new LoginUser();
+    LoginUser loginUser = mock(LoginUser.class);
     String loginName = "loginName";
-    loginUser.setLoginName(loginName);
     String password = "password";
-    loginUser.setPassword(password);
+    when(loginUser.getLoginName()).thenReturn(loginName);
+    when(loginUser.getPassword()).thenReturn(password);
 
-    User user = Mockito.mock(User.class);
-    String apass = "another password";
-    when(user.getPassword()).thenReturn(apass);
+    User user = mock(User.class);
+    String anotherPassword = "another password";
+    when(user.getPassword()).thenReturn(anotherPassword);
+
     when(userRepo.findByUsernameOrEmail(loginName, loginName)).thenReturn(user);
-    when(passwordService.match(password, apass)).thenReturn(false);
+    when(passwordService.match(password, anotherPassword)).thenReturn(false);
 
     loginService.login(loginUser);
   }
@@ -100,9 +94,10 @@ public class LoginServiceImplTestForLogin {
     String tokenMsg = "token";
     LoginToken expectToken = new LoginToken(tokenMsg);
 
-    User user = Mockito.mock(User.class);
+    User user = mock(User.class);
     when(user.getPassword()).thenReturn(password);
     when(user.getUsername()).thenReturn(username);
+
     when(userRepo.findByUsernameOrEmail(username, username)).thenReturn(user);
     when(passwordService.match(password, password)).thenReturn(true);
     when(tokenService.buildToken()).thenReturn(tokenMsg);

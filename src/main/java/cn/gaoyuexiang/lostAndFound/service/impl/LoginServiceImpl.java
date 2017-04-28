@@ -45,49 +45,20 @@ public class LoginServiceImpl implements LoginService {
   public LoginToken login(LoginUser loginUser) {
     this.checkComplete(loginUser);
     User user = this.loadUserByName(loginUser.getLoginName());
-    checkPassword(loginUser.getPassword(), user.getPassword());
+    this.checkPassword(loginUser.getPassword(), user.getPassword());
     String username = user.getUsername();
     Login onlineUser = loginRepo.findByUsername(username);
     long loginTime = System.currentTimeMillis();
-    String token;
-    if (onlineUser == null) {
-      token = saveOnlineUser(username, loginTime);
-    } else {
-      token = updateOnlineUser(onlineUser, loginTime);
-    }
+    String token = onlineUser == null ?
+        saveOnlineUser(username, loginTime) :
+        updateOnlineUser(onlineUser, loginTime);
     return new LoginToken(token);
   }
 
-  private void checkPassword(String loginPassword, String savedPassword) {
-    boolean isMatched = passwordService.match(loginPassword, savedPassword);
-    if (!isMatched) {
-      throw new PasswordNotMatchException();
-    }
-  }
-
-  private String updateOnlineUser(Login onlineUser, long loginTime) {
-    String token;
-    onlineUser.setLoginTime(loginTime);
-    token = tokenService.buildToken();
-    onlineUser.setToken(passwordService.encode(token));
-    loginRepo.save(onlineUser);
-    return token;
-  }
-
-  private String saveOnlineUser(String username, long loginTime) {
-    String token = tokenService.buildToken();
-    String id = idCreatorService.create();
-    Login login = new Login();
-    login.setId(id);
-    login.setUsername(username);
-    login.setToken(passwordService.encode(token));
-    login.setLoginTime(loginTime);
-    loginRepo.save(login);
-    return token;
-  }
-
   private void checkComplete(LoginUser loginUser) {
-    if (loginUser == null || loginUser.getLoginName() == null || loginUser.getPassword() == null) {
+    if (loginUser == null ||
+        loginUser.getLoginName() == null ||
+        loginUser.getPassword() == null) {
       throw new MissParamException();
     }
   }
@@ -98,6 +69,33 @@ public class LoginServiceImpl implements LoginService {
       throw new UserNotExistException();
     }
     return user;
+  }
+
+  private void checkPassword(String loginPassword, String savedPassword) {
+    boolean isMatched = passwordService.match(loginPassword, savedPassword);
+    if (!isMatched) {
+      throw new PasswordNotMatchException();
+    }
+  }
+
+  private String saveOnlineUser(String username, long loginTime) {
+    String token = tokenService.buildToken();
+    Login login = new Login();
+    login.setId(idCreatorService.create());
+    login.setUsername(username);
+    login.setToken(passwordService.encode(token));
+    login.setLoginTime(loginTime);
+    loginRepo.save(login);
+    return token;
+  }
+
+  private String updateOnlineUser(Login onlineUser, long loginTime) {
+    String token;
+    onlineUser.setLoginTime(loginTime);
+    token = tokenService.buildToken();
+    onlineUser.setToken(passwordService.encode(token));
+    loginRepo.save(onlineUser);
+    return token;
   }
 
   @Override
