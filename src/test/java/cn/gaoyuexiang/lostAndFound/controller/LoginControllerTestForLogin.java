@@ -6,7 +6,7 @@ import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
-import cn.gaoyuexiang.lostAndFound.model.dto.enums.LoginMsg;
+import cn.gaoyuexiang.lostAndFound.enums.LoginMsg;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -2,7 +2,7 @@ package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.SignInUser;
-import cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg;
+import cn.gaoyuexiang.lostAndFound.enums.CreatorMsg;
 import cn.gaoyuexiang.lostAndFound.service.UserCreatorService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

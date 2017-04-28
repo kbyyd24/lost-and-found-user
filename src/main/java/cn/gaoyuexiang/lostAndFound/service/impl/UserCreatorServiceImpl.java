@@ -2,7 +2,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
 import cn.gaoyuexiang.lostAndFound.model.dto.SignInUser;
-import cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg;
+import cn.gaoyuexiang.lostAndFound.enums.CreatorMsg;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
 import cn.gaoyuexiang.lostAndFound.service.IdCreatorService;
 import cn.gaoyuexiang.lostAndFound.service.PasswordService;
@@ -10,7 +10,7 @@ import cn.gaoyuexiang.lostAndFound.service.UserCreatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg.*;
+import static cn.gaoyuexiang.lostAndFound.enums.CreatorMsg.*;
 
 @Service
 public class UserCreatorServiceImpl implements UserCreatorService {

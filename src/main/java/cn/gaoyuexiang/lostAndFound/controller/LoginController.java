@@ -7,20 +7,18 @@ import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
-import cn.gaoyuexiang.lostAndFound.model.dto.enums.LoginMsg;
+import cn.gaoyuexiang.lostAndFound.enums.LoginMsg;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static cn.gaoyuexiang.lostAndFound.model.dto.enums.LoginMsg.MSG_NOT_COMPLETE;
-import static cn.gaoyuexiang.lostAndFound.model.dto.enums.LoginMsg.USERNAME_PASSWORD_NOT_MATCH;
+import static cn.gaoyuexiang.lostAndFound.enums.LoginMsg.MSG_NOT_COMPLETE;
+import static cn.gaoyuexiang.lostAndFound.enums.LoginMsg.USERNAME_PASSWORD_NOT_MATCH;
 import static org.springframework.http.HttpStatus.*;
 
 @UserController

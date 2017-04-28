@@ -1,7 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.service;
 
 import cn.gaoyuexiang.lostAndFound.model.dto.SignInUser;
-import cn.gaoyuexiang.lostAndFound.model.dto.enums.CreatorMsg;
+import cn.gaoyuexiang.lostAndFound.enums.CreatorMsg;
 import org.springframework.stereotype.Service;
 
 @Service

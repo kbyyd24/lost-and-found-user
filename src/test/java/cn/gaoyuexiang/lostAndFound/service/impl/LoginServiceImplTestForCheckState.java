@@ -30,16 +30,20 @@ public class LoginServiceImplTestForCheckState {
   @MockBean
   private PasswordService passwordService;
 
+  private String username;
+  private String token;
+  private String userState;
+
   @Before
   public void setUp() throws Exception {
-    loginService = new LoginServiceImpl(loginRepo, null, passwordService, null, null);
+    username = "username";
+    token = "token";
+    userState = "offline";
   }
 
   @Test
   public void should_return_online_when_user_is_online() throws Exception {
-    String username = "username";
-    String token = "token";
-    String expectOnline = "online";
+    userState = "online";
     Login login = new Login();
     login.setToken(token);
 
@@ -48,27 +52,20 @@ public class LoginServiceImplTestForCheckState {
 
     String online = loginService.checkState(username, token);
 
-    assertThat(online, is(expectOnline));
+    assertThat(online, is(userState));
   }
 
   @Test
   public void should_return_offline_when_user_is_offline() throws Exception {
-    String username = "username";
-    String token = "token";
-    String expectOffline = "offline";
-
     when(loginRepo.findByUsername(username)).thenReturn(null);
 
     String offline = loginService.checkState(username, token);
 
-    assertThat(offline, is(expectOffline));
+    assertThat(offline, is(userState));
   }
 
   @Test
   public void should_return_offline_when_given_user_with_error_token() throws Exception {
-    String username = "username";
-    String token = "token";
-    String offline = "offline";
     Login login = new Login();
     login.setToken(token);
 
@@ -77,6 +74,6 @@ public class LoginServiceImplTestForCheckState {
 
     String checkStateMsg = loginService.checkState(username, token);
 
-    assertThat(checkStateMsg, is(offline));
+    assertThat(checkStateMsg, is(userState));
   }
 }
