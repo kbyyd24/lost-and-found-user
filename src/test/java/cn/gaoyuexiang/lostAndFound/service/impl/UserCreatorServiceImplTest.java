@@ -39,12 +39,6 @@ public class UserCreatorServiceImplTest {
   @MockBean
   private IdCreatorService idCreatorService;
 
-  @Before
-  @Ignore
-  public void setUp() throws Exception {
-    userCreatorService = new UserCreatorServiceImpl(userRepo, passwordService, idCreatorService);
-  }
-
   @Test
   public void should_return_msg_not_enough_when_given_a_not_complete_user() throws Exception {
     SignInUser signInUser = Mockito.mock(SignInUser.class);
@@ -96,10 +90,9 @@ public class UserCreatorServiceImplTest {
     SignInUser signInUser = new SignInUser();
     String username = "username";
     String email = "email";
-    String password = "password";
     signInUser.setUsername(username);
     signInUser.setEmail(email);
-    signInUser.setPassword(password);
+    signInUser.setPassword("password");
 
     when(userRepo.findByUsernameOrEmail(username, email)).thenReturn(null);
     when(userRepo.save(any(User.class))).thenReturn(new User());

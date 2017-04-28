@@ -20,7 +20,9 @@ public class UserCreatorServiceImpl implements UserCreatorService {
   private IdCreatorService idCreatorService;
 
   @Autowired
-  public UserCreatorServiceImpl(UserRepo userRepo, PasswordService passwordService, IdCreatorService idCreatorService) {
+  public UserCreatorServiceImpl(UserRepo userRepo,
+                                PasswordService passwordService,
+                                IdCreatorService idCreatorService) {
     this.userRepo = userRepo;
     this.passwordService = passwordService;
     this.idCreatorService = idCreatorService;
@@ -31,7 +33,8 @@ public class UserCreatorServiceImpl implements UserCreatorService {
     if (!isComplete(signInUser)) {
       return MSG_NOT_ENOUGH;
     }
-    CreatorMsg x = checkExistUser(signInUser);
+    User existUser = userRepo.findByUsernameOrEmail(signInUser.getUsername(), signInUser.getEmail());
+    CreatorMsg x = checkExistUser(signInUser, existUser);
     if (x != null) {
       return x;
     }
@@ -50,8 +53,7 @@ public class UserCreatorServiceImpl implements UserCreatorService {
     return user;
   }
 
-  private CreatorMsg checkExistUser(SignInUser signInUser) {
-    User existUser = userRepo.findByUsernameOrEmail(signInUser.getUsername(), signInUser.getEmail());
+  private CreatorMsg checkExistUser(SignInUser signInUser, User existUser) {
     if (existUser != null) {
       if (existUser.getUsername().equals(signInUser.getUsername())) {
         return USERNAME_EXIST;
