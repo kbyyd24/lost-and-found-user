@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.service.impl;
 
+import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.EmailVerifierRepo;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
 import cn.gaoyuexiang.lostAndFound.model.persistence.EmailVerifier;
@@ -8,44 +9,47 @@ import cn.gaoyuexiang.lostAndFound.service.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = LostAndFoundUserApplication.class)
 public class EmailVerificationServiceImplTestForVerify {
 
+  @Autowired
   private EmailVerificationService emailVerificationService;
 
-  @Mock
+  @MockBean
   private UserRepo userRepo;
 
-  @Mock
+  @MockBean
   private EmailVerifierRepo emailVerifierRepo;
 
-  @Mock
+  @MockBean
   private IdCreatorService idCreatorService;
 
-  @Mock
+  @MockBean
   private TokenService tokenService;
 
-  @Mock
+  @MockBean
   private EmailFormatService emailFormatService;
 
-  @Mock
+  @MockBean
   private EmailService emailService;
 
-  @Mock
+  @MockBean
   private LoginService loginService;
 
-  @Mock
+  @MockBean
   private PasswordService passwordService;
+
   private String username;
   private String userToken;
   private String email;
