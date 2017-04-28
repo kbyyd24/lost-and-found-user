@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.service.impl;
 
+import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.LoginRepo;
 import cn.gaoyuexiang.lostAndFound.model.persistence.Login;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
@@ -7,22 +8,26 @@ import cn.gaoyuexiang.lostAndFound.service.PasswordService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = LostAndFoundUserApplication.class)
 public class LoginServiceImplTestForCheckState {
 
+  @Autowired
   private LoginService loginService;
 
-  @Mock
+  @MockBean
   private LoginRepo loginRepo;
 
-  @Mock
+  @MockBean
   private PasswordService passwordService;
 
   @Before
