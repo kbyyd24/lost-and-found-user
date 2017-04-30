@@ -5,6 +5,7 @@ import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import cn.gaoyuexiang.lostAndFound.service.UserInfoService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +40,18 @@ public class UserInfoControllerTestForUpdate {
   @MockBean
   private LoginService loginService;
 
+  private String username;
+  private String token;
+
+  @Before
+  public void setUp() throws Exception {
+    username = "username";
+    token = "token";
+  }
+
   @Test
   public void should_return_200_when_create_success() throws Exception {
     String success = "success";
-    String username = "username";
-    String token = "token";
     given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
     given(userInfoService.createInfo(any(UserInfoDTO.class), anyString())).willReturn(success);
     check(username, token, success, OK);
@@ -51,8 +59,6 @@ public class UserInfoControllerTestForUpdate {
 
   @Test
   public void should_return_401_when_user_is_offline() throws Exception {
-    String username = "username";
-    String token = "token";
     String unauthorized = "UNAUTHORIZED";
     given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.UNAUTHORIZED);
     check(username, token, unauthorized, UNAUTHORIZED);
