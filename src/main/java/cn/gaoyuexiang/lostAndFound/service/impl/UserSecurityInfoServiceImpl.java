@@ -1,6 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.SecurityInfoUpdater;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserSecurityInfo;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
@@ -22,7 +23,7 @@ public class UserSecurityInfoServiceImpl implements UserSecurityInfoService {
   public UserSecurityInfo getInfo(String username) {
     User info = userRepo.findByUsername(username);
     if (info == null) {
-      return null;
+      throw new UserNotExistException();
     }
     return buildInfo(username, info);
   }

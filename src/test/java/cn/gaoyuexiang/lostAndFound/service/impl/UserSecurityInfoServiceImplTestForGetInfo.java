@@ -2,10 +2,12 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserSecurityInfo;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
 import cn.gaoyuexiang.lostAndFound.service.UserSecurityInfoService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -56,9 +58,16 @@ public class UserSecurityInfoServiceImplTestForGetInfo {
   }
 
   @Test
+  @Ignore
   public void should_return_null_when_given_username_not_exist() throws Exception {
     when(userRepo.findByUsername(username)).thenReturn(null);
     UserSecurityInfo info = userSecurityInfoService.getInfo(username);
     assertNull(info);
+  }
+
+  @Test(expected = UserNotExistException.class)
+  public void should_throw_UserNotExistException_when_username_not_exist() throws Exception {
+    when(userRepo.findByUsername(username)).thenReturn(null);
+    userSecurityInfoService.getInfo(username);
   }
 }

@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
 import cn.gaoyuexiang.lostAndFound.enums.UserState;
+import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.SecurityInfoUpdater;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserSecurityInfo;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -50,6 +52,12 @@ public class UserSecurityInfoController {
     }
     String result = userSecurityInfoService.updateInfo(updater, username);
     return new ResponseEntity<>(new Message(result), OK);
+  }
+
+  @ExceptionHandler(value = UserNotExistException.class)
+  @ResponseStatus(NOT_FOUND)
+  public Message handleUserNotExistException() {
+    return new Message("not found");
   }
 
 }
