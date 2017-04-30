@@ -29,14 +29,15 @@ public class UserSecurityInfoServiceImplTestForGetInfo {
   @MockBean
   private UserRepo userRepo;
 
+  private String username;
+
   @Before
   public void setUp() throws Exception {
-    userSecurityInfoService = new UserSecurityInfoServiceImpl(userRepo);
+    username = "username";
   }
 
   @Test
   public void should_return_security_info_when_username_exist() throws Exception {
-    String username = "username";
     String email = "email";
     User user = Mockito.mock(User.class);
     when(user.getUsername()).thenReturn(username);
@@ -56,7 +57,6 @@ public class UserSecurityInfoServiceImplTestForGetInfo {
 
   @Test
   public void should_return_null_when_given_username_not_exist() throws Exception {
-    String username = "username";
     when(userRepo.findByUsername(username)).thenReturn(null);
     UserSecurityInfo info = userSecurityInfoService.getInfo(username);
     assertNull(info);
