@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.UserInfoRepo;
+import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.model.persistence.UserInfo;
 import cn.gaoyuexiang.lostAndFound.service.UserInfoService;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,5 +55,12 @@ public class UserInfoServiceImplTestForGetInfo {
     when(userInfoRepo.findByUsername(username)).thenReturn(userInfo);
     UserInfoDTO info = userInfoService.getInfo(username);
     assertThat(info, is(expectInfo));
+  }
+
+  @Test(expected = UserNotExistException.class)
+  public void should_throw_UserNotExistException_when_username_not_exist() throws Exception {
+    String username = "username";
+    when(userInfoRepo.findByUsername(username)).thenReturn(null);
+    userInfoService.getInfo(username);
   }
 }

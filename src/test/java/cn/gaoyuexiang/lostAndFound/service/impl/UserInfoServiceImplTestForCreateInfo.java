@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -39,5 +40,6 @@ public class UserInfoServiceImplTestForCreateInfo {
     when(userInfoRepo.save(any(UserInfo.class))).thenReturn(new UserInfo());
     String success = userInfoService.createInfo(userInfoDTO, "username");
     assertThat(success, is("success"));
+    verify(userInfoRepo).save(any(UserInfo.class));
   }
 }

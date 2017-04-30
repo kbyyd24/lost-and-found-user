@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
 import cn.gaoyuexiang.lostAndFound.enums.UserState;
+import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
@@ -45,11 +46,14 @@ public class UserInfoController {
   }
 
   @GetMapping(path = "info/{username}")
-  public ResponseEntity<?> getInfo(@PathVariable("username") String username) {
-    UserInfoDTO info = userInfoService.getInfo(username);
-    if (info == null) {
-      return new ResponseEntity<>(new Message("not found"), HttpStatus.NOT_FOUND);
-    }
-    return new ResponseEntity<>(info, HttpStatus.OK);
+  @ResponseStatus(value = HttpStatus.OK)
+  public UserInfoDTO getInfo(@PathVariable("username") String username) {
+    return userInfoService.getInfo(username);
+  }
+
+  @ExceptionHandler(value = UserNotExistException.class)
+  @ResponseStatus(value = HttpStatus.NOT_FOUND)
+  public Message handleUserNotExist() {
+    return new Message("not found");
   }
 }

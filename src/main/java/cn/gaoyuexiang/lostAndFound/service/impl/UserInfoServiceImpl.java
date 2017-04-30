@@ -1,6 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.UserInfoRepo;
+import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.model.persistence.UserInfo;
 import cn.gaoyuexiang.lostAndFound.service.IdCreatorService;
@@ -38,6 +39,9 @@ public class UserInfoServiceImpl implements UserInfoService {
   @Override
   public UserInfoDTO getInfo(String username) {
     UserInfo userInfo = userInfoRepo.findByUsername(username);
+    if (userInfo == null) {
+      throw new UserNotExistException();
+    }
     return buildUserInfoDTO(userInfo);
   }
 

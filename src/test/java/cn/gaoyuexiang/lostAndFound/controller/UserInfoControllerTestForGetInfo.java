@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.service.UserInfoService;
@@ -41,7 +42,7 @@ public class UserInfoControllerTestForGetInfo {
   @Test
   public void should_return_404_when_username_is_not_found() throws Exception {
     String username = "username";
-    given(userInfoService.getInfo(username)).willReturn(null);
+    given(userInfoService.getInfo(username)).willThrow(new UserNotExistException());
     ResponseEntity<Message> entity =
         restTemplate.getForEntity(String.format("/user/info/%s", username), Message.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.NOT_FOUND));
