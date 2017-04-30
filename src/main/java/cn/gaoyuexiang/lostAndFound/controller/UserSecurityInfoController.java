@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
 import cn.gaoyuexiang.lostAndFound.enums.UserState;
+import cn.gaoyuexiang.lostAndFound.exception.UnauthorizedException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.SecurityInfoUpdater;
@@ -32,14 +33,14 @@ public class UserSecurityInfoController {
   }
 
   @GetMapping(path = "info/{username}/security", headers = "user-token")
-  public ResponseEntity<?> getInfo(@PathVariable("username") String username,
+  @ResponseStatus(OK)
+  public UserSecurityInfo getInfo(@PathVariable("username") String username,
                                    @RequestHeader("user-token") String token) {
     UserState userState = loginService.checkState(username, token);
     if (userState.equals(OFFLINE)) {
-      return new ResponseEntity<>(new Message("unauthorized"), UNAUTHORIZED);
+      throw new UnauthorizedException();
     }
-    UserSecurityInfo info = userSecurityInfoService.getInfo(username);
-    return new ResponseEntity<>(info, HttpStatus.OK);
+    return userSecurityInfoService.getInfo(username);
   }
 
   @PutMapping(path = "info/{username}/security", headers = "user-token")
@@ -52,6 +53,12 @@ public class UserSecurityInfoController {
     }
     String result = userSecurityInfoService.updateInfo(updater, username);
     return new ResponseEntity<>(new Message(result), OK);
+  }
+
+  @ExceptionHandler(value = UnauthorizedException.class)
+  @ResponseStatus(UNAUTHORIZED)
+  public Message handleUnauthorizedException() {
+    return new Message("unauthorized");
   }
 
   @ExceptionHandler(value = UserNotExistException.class)
