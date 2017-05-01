@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserInfoService {
 
-  String createInfo(UserInfoDTO userInfoDTO, String username);
+  void createInfo(UserInfoDTO userInfoDTO, String username);
 
   UserInfoDTO getInfo(String username);
 

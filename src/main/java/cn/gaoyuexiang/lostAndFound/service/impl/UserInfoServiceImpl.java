@@ -20,10 +20,9 @@ public class UserInfoServiceImpl implements UserInfoService {
   }
 
   @Override
-  public String createInfo(UserInfoDTO userInfoDTO, String username) {
+  public void createInfo(UserInfoDTO userInfoDTO, String username) {
     UserInfo userInfo = buildUserInfo(userInfoDTO, username);
     userInfoRepo.save(userInfo);
-    return "success";
   }
 
   private UserInfo buildUserInfo(UserInfoDTO userInfoDTO, String username) {

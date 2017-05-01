@@ -23,6 +23,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -53,7 +54,7 @@ public class UserInfoControllerTestForAdd {
   public void should_return_200_when_create_success() throws Exception {
     String success = "success";
     given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
-    given(userInfoService.createInfo(any(UserInfoDTO.class), anyString())).willReturn(success);
+    doNothing().when(userInfoService).createInfo(any(UserInfoDTO.class), eq(username));
     check(username, token, success, OK);
   }
 

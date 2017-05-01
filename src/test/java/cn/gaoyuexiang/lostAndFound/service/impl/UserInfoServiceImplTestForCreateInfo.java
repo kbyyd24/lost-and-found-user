@@ -38,8 +38,7 @@ public class UserInfoServiceImplTestForCreateInfo {
   public void should_return_success_when_create_success() throws Exception {
     UserInfoDTO userInfoDTO = new UserInfoDTO();
     when(userInfoRepo.save(any(UserInfo.class))).thenReturn(new UserInfo());
-    String success = userInfoService.createInfo(userInfoDTO, "username");
-    assertThat(success, is("success"));
+    userInfoService.createInfo(userInfoDTO, "username");
     verify(userInfoRepo).save(any(UserInfo.class));
   }
 }

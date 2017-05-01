@@ -41,8 +41,8 @@ public class UserInfoController {
     } else if (userState.equals(UserState.OFFLINE)) {
       return new ResponseEntity<>(new Message(userState.name()), HttpStatus.NOT_FOUND);
     }
-    String info = userInfoService.createInfo(userInfo, username);
-    return new ResponseEntity<>(new Message(info), HttpStatus.OK);
+    userInfoService.createInfo(userInfo, username);
+    return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
   }
 
   @GetMapping(path = "info/{username}")
