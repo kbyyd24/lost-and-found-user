@@ -44,15 +44,16 @@ public class UserSecurityInfoController {
   }
 
   @PutMapping(path = "info/{username}/security", headers = "user-token")
-  public ResponseEntity<Message> updateInfo(@RequestBody SecurityInfoUpdater updater,
+  @ResponseStatus(OK)
+  public Message updateInfo(@RequestBody SecurityInfoUpdater updater,
                                       @PathVariable("username") String username,
                                       @RequestHeader("user-token") String token) {
     UserState userState = loginService.checkState(username, token);
     if (userState.equals(OFFLINE)) {
-      return new ResponseEntity<>(new Message("unauthorized"), UNAUTHORIZED);
+      throw new UnauthorizedException();
     }
     userSecurityInfoService.updateInfo(updater, username);
-    return new ResponseEntity<>(new Message("success"), OK);
+    return new Message("success");
   }
 
   @ExceptionHandler(value = UnauthorizedException.class)
