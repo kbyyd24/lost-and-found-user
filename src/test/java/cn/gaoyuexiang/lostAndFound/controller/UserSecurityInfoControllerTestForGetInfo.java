@@ -5,6 +5,7 @@ import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserSecurityInfo;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import cn.gaoyuexiang.lostAndFound.service.UserSecurityInfoService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +36,23 @@ public class UserSecurityInfoControllerTestForGetInfo {
   @MockBean
   private LoginService loginService;
 
-  @Test
-  public void should_return_200_when_get_info_success() throws Exception {
-    String username = "username";
-    String token = "token";
-    String path = String.format(URL_FORMAT, username);
+  private String username;
+  private String token;
+  private String path;
+  private HttpEntity<Object> requestEntity;
+
+  @Before
+  public void setUp() throws Exception {
+    username = "username";
+    token = "token";
+    path = String.format(URL_FORMAT, username);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("user-token", token);
-    HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
+    requestEntity = new HttpEntity<>(httpHeaders);
+  }
+
+  @Test
+  public void should_return_200_when_get_info_success() throws Exception {
     UserSecurityInfo expectInfo = new UserSecurityInfo();
     
     given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
@@ -57,13 +67,6 @@ public class UserSecurityInfoControllerTestForGetInfo {
 
   @Test
   public void should_return_401_when_user_is_offline() throws Exception {
-    String username = "username";
-    String token = "token";
-    String path = String.format(URL_FORMAT, username);
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add("user-token", token);
-    HttpEntity<Object> requestEntity = new HttpEntity<>(httpHeaders);
-
     given(loginService.checkState(eq(username), eq(token))).willReturn(OFFLINE);
 
     ResponseEntity<Message> entity =
