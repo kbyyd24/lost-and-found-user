@@ -54,24 +54,24 @@ public class UserInfoControllerTestForUpdate {
     String success = "success";
     given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
     given(userInfoService.createInfo(any(UserInfoDTO.class), anyString())).willReturn(success);
-    check(username, token, success, OK);
+    check(success, OK);
   }
 
   @Test
   public void should_return_401_when_user_is_offline() throws Exception {
     String unauthorized = "UNAUTHORIZED";
     given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.UNAUTHORIZED);
-    check(username, token, unauthorized, UNAUTHORIZED);
+    check(unauthorized, UNAUTHORIZED);
   }
 
-  private void check(String username, String token, String message, HttpStatus status) {
+  private void check(String message, HttpStatus status) {
     UserInfoDTO userInfoDTO = new UserInfoDTO();
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add(username, username);
     httpHeaders.add("user-token", token);
-    HttpEntity<UserInfoDTO> postEntity = new HttpEntity<>(userInfoDTO, httpHeaders);
+    HttpEntity<UserInfoDTO> putEntity = new HttpEntity<>(userInfoDTO, httpHeaders);
     ResponseEntity<Message> entity =
-        restTemplate.exchange(String.format("/user/info/%s", username), HttpMethod.PUT, postEntity, Message.class);
+        restTemplate.exchange("/user/info/" + username, HttpMethod.PUT, putEntity, Message.class);
     assertThat(entity.getStatusCode(), is(status));
     assertThat(entity.getBody().getMsg(), is(message));
   }

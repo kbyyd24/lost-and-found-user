@@ -66,9 +66,9 @@ public class UserInfoControllerTestForAdd {
 
   @Test
   public void should_return_404_when_user_is_offline() throws Exception {
-    String message = "OFFLINE";
+    String offline = "OFFLINE";
     given(loginService.checkState(eq(username), eq(token))).willReturn(OFFLINE);
-    check(username, token, message, NOT_FOUND);
+    check(username, token, offline, NOT_FOUND);
   }
 
   private void check(String username, String token, String message, HttpStatus status) {
