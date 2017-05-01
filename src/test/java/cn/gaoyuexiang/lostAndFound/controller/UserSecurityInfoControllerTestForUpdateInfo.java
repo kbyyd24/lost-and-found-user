@@ -5,6 +5,7 @@ import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.SecurityInfoUpdater;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import cn.gaoyuexiang.lostAndFound.service.UserSecurityInfoService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.doNothing;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserSecurityInfoControllerTestForUpdateInfo {
 
-  public static final String URI_FORMAT = "/user/info/%s/security";
+  private static final String URI_FORMAT = "/user/info/%s/security";
   @Autowired
   private TestRestTemplate restTemplate;
 
@@ -36,14 +37,23 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
   @MockBean
   private LoginService loginService;
 
+  private String username;
+  private String token;
+  private String email;
+  private String path;
+
+  @Before
+  public void setUp() throws Exception {
+    username = "username";
+    token = "token";
+    email = "email";
+    path = String.format(URI_FORMAT, username);
+  }
+
   @Test
   public void should_response_200_when_update_success() throws Exception {
-    String username = "username";
-    String path = String.format(URI_FORMAT, username);
-    String token = "token";
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("user-token", token);
-    String email = "email";
     SecurityInfoUpdater updater = new SecurityInfoUpdater();
     updater.setEmail(email);
     HttpEntity<SecurityInfoUpdater> requestEntity = new HttpEntity<>(updater, httpHeaders);
@@ -61,12 +71,8 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
 
   @Test
   public void should_response_401_when_user_is_offline() throws Exception {
-    String username = "username";
-    String path = String.format(URI_FORMAT, username);
-    String token = "token";
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("user-token", token);
-    String email = "email";
     SecurityInfoUpdater updater = new SecurityInfoUpdater();
     updater.setEmail(email);
     HttpEntity<SecurityInfoUpdater> requestEntity = new HttpEntity<>(updater, httpHeaders);
