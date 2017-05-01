@@ -53,17 +53,19 @@ public class EmailController {
                                         @PathVariable("email") String email,
                                         @RequestHeader("user-token") String userToken,
                                         @RequestHeader("username") String username) {
-    String verifyResult =
+    EmailVerifyMsg verifyResult =
         emailVerificationService.verify(username, userToken, email, emailToken.getToken());
     switch (verifyResult) {
-      case "success":
-        return new ResponseEntity<Message>(new Message(verifyResult), OK);
-      case "timeout":
-        return new ResponseEntity<Message>(new Message("token expired"), GONE);
-      case "unauthorized":
-        return new ResponseEntity<Message>(new Message(verifyResult), UNAUTHORIZED);
+      case SUCCESS:
+        return new ResponseEntity<>(new Message(verifyResult.name()), OK);
+      case TOKEN_TIMEOUT:
+        return new ResponseEntity<>(new Message(verifyResult.name()), GONE);
+      case UNAUTHORIZED:
+        return new ResponseEntity<>(new Message(verifyResult.name()), UNAUTHORIZED);
+      case EMAIL_NOT_FOUND:
+        return new ResponseEntity<>(new Message(verifyResult.name()), NOT_FOUND);
       default:
-        return new ResponseEntity<Message>(new Message("unknown result"), NOT_FOUND);
+        return new ResponseEntity<>(new Message("unknown result"), NOT_FOUND);
     }
   }
 

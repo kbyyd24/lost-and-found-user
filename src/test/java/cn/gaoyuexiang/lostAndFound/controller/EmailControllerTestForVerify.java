@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.enums.EmailVerifyMsg;
 import cn.gaoyuexiang.lostAndFound.model.dto.EmailToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.service.EmailVerificationService;
@@ -18,9 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.eq;
 import static org.springframework.http.HttpMethod.PUT;
-import static org.springframework.http.HttpStatus.GONE;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -51,23 +50,30 @@ public class EmailControllerTestForVerify {
 
   @Test
   public void should_return_200_when_verify_success() throws Exception {
-    given(service.verify(eq(username), eq(userToken), eq(email), eq(token))).willReturn("success");
+    given(service.verify(eq(username), eq(userToken), eq(email), eq(token))).willReturn(EmailVerifyMsg.SUCCESS);
     ResponseEntity<Message> entity = getMessageResponseEntity();
     assertThat(entity.getStatusCode(), is(OK));
   }
 
   @Test
   public void should_return_401_when_verify_unauthorized() throws Exception {
-    given(service.verify(eq(username), eq(userToken), eq(email), eq(token))).willReturn("unauthorized");
+    given(service.verify(eq(username), eq(userToken), eq(email), eq(token))).willReturn(EmailVerifyMsg.UNAUTHORIZED);
     ResponseEntity<Message> entity = getMessageResponseEntity();
     assertThat(entity.getStatusCode(), is(UNAUTHORIZED));
   }
 
   @Test
   public void should_return_410_when_email_token_expired_time() throws Exception {
-    given(service.verify(eq(username), eq(userToken), eq(email), eq(token))).willReturn("timeout");
+    given(service.verify(eq(username), eq(userToken), eq(email), eq(token))).willReturn(EmailVerifyMsg.TOKEN_TIMEOUT);
     ResponseEntity<Message> entity = getMessageResponseEntity();
     assertThat(entity.getStatusCode(), is(GONE));
+  }
+
+  @Test
+  public void should_return_404_when_email_not_exist() throws Exception {
+    given(service.verify(eq(username), eq(userToken), eq(email), eq(token))).willReturn(EmailVerifyMsg.EMAIL_NOT_FOUND);
+    ResponseEntity<Message> entity = getMessageResponseEntity();
+    assertThat(entity.getStatusCode(), is(NOT_FOUND));
   }
 
   private ResponseEntity<Message> getMessageResponseEntity() {

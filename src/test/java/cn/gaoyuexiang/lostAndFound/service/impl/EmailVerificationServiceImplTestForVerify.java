@@ -3,6 +3,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.EmailVerifierRepo;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.enums.EmailVerifyMsg;
 import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.persistence.EmailVerifier;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static cn.gaoyuexiang.lostAndFound.enums.EmailVerifyMsg.*;
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -84,15 +86,15 @@ public class EmailVerificationServiceImplTestForVerify {
     when(passwordService.match(verifyToken, encodedVerifyToken)).thenReturn(true);
     doNothing().when(userRepo).enableEmailByUsername(username);
     doNothing().when(emailVerifierRepo).delete(emailVerifierId);
-    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
-    assertThat(verifyResult, is("success"));
+    EmailVerifyMsg verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    assertThat(verifyResult, is(SUCCESS));
   }
 
   @Test
   public void should_return_unauthorized_when_user_is_offline() throws Exception {
     when(loginService.checkState(username, userToken)).thenReturn(OFFLINE);
-    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
-    assertThat(verifyResult, is("unauthorized"));
+    EmailVerifyMsg verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    assertThat(verifyResult, is(UNAUTHORIZED));
   }
 
   @Test
@@ -107,9 +109,9 @@ public class EmailVerificationServiceImplTestForVerify {
     when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
     when(userRepo.findByUsername(username)).thenReturn(user);
 
-    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    EmailVerifyMsg verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
 
-    assertThat(verifyResult, is("unauthorized"));
+    assertThat(verifyResult, is(UNAUTHORIZED));
   }
 
   @Test
@@ -119,8 +121,8 @@ public class EmailVerificationServiceImplTestForVerify {
     when(user.getEmail()).thenReturn(email);
     when(userRepo.findByUsername(username)).thenReturn(user);
     when(emailVerifierRepo.findByEmail(email)).thenReturn(null);
-    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
-    assertThat(verifyResult, is("email not found"));
+    EmailVerifyMsg verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    assertThat(verifyResult, is(EMAIL_NOT_FOUND));
   }
 
   @Test
@@ -133,8 +135,8 @@ public class EmailVerificationServiceImplTestForVerify {
     when(userRepo.findByUsername(username)).thenReturn(user);
     when(emailVerifierRepo.findByEmail(email)).thenReturn(mockVerifier);
     when(mockVerifier.getCreateTime()).thenReturn(createTime);
-    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
-    assertThat(verifyResult, is("timeout"));
+    EmailVerifyMsg verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    assertThat(verifyResult, is(TOKEN_TIMEOUT));
   }
 
   @Test
@@ -150,7 +152,7 @@ public class EmailVerificationServiceImplTestForVerify {
     when(emailVerifier.getId()).thenReturn("id");
     when(emailVerifierRepo.findByEmail(email)).thenReturn(emailVerifier);
     when(passwordService.match(verifyToken, savedToken)).thenReturn(false);
-    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
-    assertThat(verifyResult, is("unauthorized"));
+    EmailVerifyMsg verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    assertThat(verifyResult, is(UNAUTHORIZED));
   }
 }

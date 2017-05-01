@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import java.time.LocalTime;
 
+import static cn.gaoyuexiang.lostAndFound.enums.EmailVerifyMsg.*;
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
 
 @Service
@@ -57,7 +58,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     }
     UserState userState = loginService.checkState(user.getUsername(), token);
     if (userState.equals(OFFLINE)) {
-      return EmailVerifyMsg.UNAUTHORIZED;
+      return UNAUTHORIZED;
     }
     String emailToken = tokenService.buildToken();
     long createTime = System.currentTimeMillis();
@@ -74,27 +75,27 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
   }
 
   @Override
-  public String verify(String username, String userToken, String email, String verifyToken) {
+  public EmailVerifyMsg verify(String username, String userToken, String email, String verifyToken) {
     UserState userState = loginService.checkState(username, userToken);
     if (userState.equals(OFFLINE)) {
-      return "unauthorized";
+      return UNAUTHORIZED;
     }
     if (!userRepo.findByUsername(username).getEmail().equals(email)) {
-      return "unauthorized";
+      return UNAUTHORIZED;
     }
     EmailVerifier emailVerifier = emailVerifierRepo.findByEmail(email);
     if (emailVerifier == null) {
-      return "email not found";
+      return EMAIL_NOT_FOUND;
     }
     if (emailVerifier.getCreateTime() + 30 * 60 * 1000 - System.currentTimeMillis() < 0) {
-      return "timeout";
+      return TOKEN_TIMEOUT;
     }
     boolean isMatch = passwordService.match(verifyToken, emailVerifier.getToken());
     if (!isMatch) {
-      return "unauthorized";
+      return UNAUTHORIZED;
     }
     userRepo.enableEmailByUsername(username);
     emailVerifierRepo.delete(emailVerifier.getId());
-    return "success";
+    return SUCCESS;
   }
 }

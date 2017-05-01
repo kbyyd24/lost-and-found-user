@@ -8,6 +8,6 @@ public interface EmailVerificationService {
 
   EmailVerifyMsg apply(String email, String token) throws MessagingException;
 
-  String verify(String username, String userToken, String email, String verifyToken);
+  EmailVerifyMsg verify(String username, String userToken, String email, String verifyToken);
 
 }
