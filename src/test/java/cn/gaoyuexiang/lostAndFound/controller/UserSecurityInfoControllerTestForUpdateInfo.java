@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -49,8 +50,7 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
 
     String updateState = "success";
     given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
-    given(userSecurityInfoService.updateInfo(any(SecurityInfoUpdater.class), eq(username)))
-        .willReturn(updateState);
+    doNothing().when(userSecurityInfoService).updateInfo(any(SecurityInfoUpdater.class), eq(username));
 
     ResponseEntity<Message> entity =
         restTemplate.exchange(path, HttpMethod.PUT, requestEntity, Message.class);

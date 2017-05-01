@@ -15,8 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LostAndFoundUserApplication.class)
@@ -28,22 +27,42 @@ public class UserSecurityInfoServiceImplTestForUpdateInfo {
   @MockBean
   private UserRepo userRepo;
 
+  private String username;
+  private String email;
+
   @Before
   public void setUp() throws Exception {
-    userSecurityInfoService = new UserSecurityInfoServiceImpl(userRepo);
+    username = "username";
+    email = "email";
   }
 
   @Test
-  public void should_return_success_when_update_success() throws Exception {
-    String username = "username";
-    String email = "email";
+  public void should_update_user_when_email_changed() throws Exception {
     User user = mock(User.class);
+    when(user.getEmail()).thenReturn("email2");
     when(userRepo.findByUsername(username)).thenReturn(user);
     when(userRepo.save(user)).thenReturn(user);
     SecurityInfoUpdater updater = new SecurityInfoUpdater();
     updater.setEmail(email);
 
-    String success = userSecurityInfoService.updateInfo(updater, username);
-    assertThat(success, is("success"));
+    userSecurityInfoService.updateInfo(updater, username);
+    verify(userRepo).findByUsername(username);
+    verify(user).getEmail();
+    verify(userRepo).save(user);
+  }
+
+  @Test
+  public void should_not_update_when_email_not_changed() throws Exception {
+    User user = mock(User.class);
+    when(user.getEmail()).thenReturn(email);
+    when(userRepo.findByUsername(username)).thenReturn(user);
+    SecurityInfoUpdater updater = new SecurityInfoUpdater();
+    updater.setEmail(email);
+
+    userSecurityInfoService.updateInfo(updater, username);
+
+    verify(userRepo).findByUsername(username);
+    verify(user).getEmail();
+    verify(userRepo, never()).save(user);
   }
 }

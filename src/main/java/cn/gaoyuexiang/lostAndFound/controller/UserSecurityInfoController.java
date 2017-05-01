@@ -51,8 +51,8 @@ public class UserSecurityInfoController {
     if (userState.equals(OFFLINE)) {
       return new ResponseEntity<>(new Message("unauthorized"), UNAUTHORIZED);
     }
-    String result = userSecurityInfoService.updateInfo(updater, username);
-    return new ResponseEntity<>(new Message(result), OK);
+    userSecurityInfoService.updateInfo(updater, username);
+    return new ResponseEntity<>(new Message("success"), OK);
   }
 
   @ExceptionHandler(value = UnauthorizedException.class)

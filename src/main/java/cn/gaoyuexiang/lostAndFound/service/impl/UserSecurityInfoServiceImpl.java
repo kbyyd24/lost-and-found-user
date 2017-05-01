@@ -37,13 +37,12 @@ public class UserSecurityInfoServiceImpl implements UserSecurityInfoService {
   }
 
   @Override
-  public String updateInfo(SecurityInfoUpdater updater, String username) {
+  public void updateInfo(SecurityInfoUpdater updater, String username) {
     User user = userRepo.findByUsername(username);
-    if (!needUpdate(updater, user)) return "success";
+    if (!needUpdate(updater, user)) return ;
     user.setEmail(updater.getEmail());
     user.setEmailEnable(false);
     userRepo.save(user);
-    return "success";
   }
 
   private boolean needUpdate(SecurityInfoUpdater updater, User user) {

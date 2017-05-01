@@ -7,5 +7,5 @@ public interface UserSecurityInfoService {
 
   UserSecurityInfo getInfo(String username);
 
-  String updateInfo(SecurityInfoUpdater updater, String username);
+  void updateInfo(SecurityInfoUpdater updater, String username);
 }
