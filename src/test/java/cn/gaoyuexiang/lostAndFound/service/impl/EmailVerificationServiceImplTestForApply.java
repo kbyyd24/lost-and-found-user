@@ -57,46 +57,43 @@ public class EmailVerificationServiceImplTestForApply {
   @MockBean
   private PasswordService passwordService;
 
+  private String email;
+  private String token;
+
   @Before
   public void setUp() throws Exception {
+    email = "email";
+    token = "token";
   }
 
   @Test
   public void should_return_mail_was_sent_when_token_and_email_matched_and_email_not_enable() throws Exception {
     String username = "username";
-    String email = "email";
-    String token = "token";
     String text = "text";
-
     User user = mock(User.class);
-
     when(userRepo.findByEmail(email)).thenReturn(user);
     when(user.getEmailEnable()).thenReturn(false);
     when(user.getUsername()).thenReturn(username);
     when(loginService.checkState(username, token)).thenReturn(ONLINE);
     when(idCreatorService.create()).thenReturn("id");
     when(tokenService.buildToken()).thenReturn(token);
+    when(passwordService.encode(token)).thenReturn(token);
     when(emailVerifierRepo.save(any(EmailVerifier.class))).thenReturn(new EmailVerifier());
     when(emailFormatService.format(eq(username), eq(token), anyLong())).thenReturn(text);
     doNothing().when(emailService).send(anyString(), eq(text));
-
     EmailVerifyMsg result = emailVerificationService.apply(email, token);
-
     assertThat(result, is(EmailVerifyMsg.SUCCESS));
   }
 
   @Test
   public void should_return_user_not_found_when_email_not_exist() throws Exception {
-    String email = "email";
     when(userRepo.findByEmail(email)).thenReturn(null);
-    EmailVerifyMsg result = emailVerificationService.apply(email, "token");
+    EmailVerifyMsg result = emailVerificationService.apply(email, token);
     assertThat(result, is(EmailVerifyMsg.EMAIL_NOT_FOUND));
   }
 
   @Test
   public void should_return_offline_when_token_not_match() throws Exception {
-    String email = "email";
-    String token = "token";
     String username = "username";
     User user = mock(User.class);
     when(user.getUsername()).thenReturn(username);
@@ -108,8 +105,6 @@ public class EmailVerificationServiceImplTestForApply {
 
   @Test
   public void should_return_email_enabled_when_enable_is_true() throws Exception {
-    String email = "email";
-    String token = "token";
     User user = mock(User.class);
     when(user.getEmailEnable()).thenReturn(true);
     when(userRepo.findByEmail(email)).thenReturn(user);
