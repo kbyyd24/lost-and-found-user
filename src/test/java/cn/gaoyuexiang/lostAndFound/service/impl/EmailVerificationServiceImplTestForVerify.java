@@ -60,15 +60,6 @@ public class EmailVerificationServiceImplTestForVerify {
 
   @Before
   public void setUp() throws Exception {
-    emailVerificationService =
-        new EmailVerificationServiceImpl(userRepo,
-            emailVerifierRepo,
-            idCreatorService,
-            tokenService,
-            emailFormatService,
-            emailService,
-            loginService,
-            passwordService);
     username = "username";
     userToken = "userToken";
     email = "email";
@@ -78,17 +69,21 @@ public class EmailVerificationServiceImplTestForVerify {
   @Test
   public void should_return_success_when_verify_success() throws Exception {
     String encodedVerifyToken = "encoded verify token";
+    String emailVerifierId = "id";
     long createTime = System.currentTimeMillis();
     when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
-    EmailVerifier emailVerifier = mock(EmailVerifier.class);
-    when(emailVerifier.getToken()).thenReturn(encodedVerifyToken);
-    when(emailVerifier.getCreateTime()).thenReturn(createTime);
-    when(emailVerifierRepo.findByEmail(email)).thenReturn(emailVerifier);
-    when(passwordService.match(verifyToken, encodedVerifyToken)).thenReturn(true);
     User user = mock(User.class);
     when(user.getEmail()).thenReturn(email);
     when(userRepo.findByUsername(username)).thenReturn(user);
+    EmailVerifier emailVerifier = mock(EmailVerifier.class);
+    when(emailVerifier.getToken()).thenReturn(encodedVerifyToken);
+    when(emailVerifier.getCreateTime()).thenReturn(createTime);
+    when(emailVerifier.getId()).thenReturn(emailVerifierId);
+    when(emailVerifierRepo.findByEmail(email)).thenReturn(emailVerifier);
+    //todo create TimeService
+    when(passwordService.match(verifyToken, encodedVerifyToken)).thenReturn(true);
     doNothing().when(userRepo).enableEmailByUsername(username);
+    doNothing().when(emailVerifierRepo).delete(emailVerifierId);
     String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
     assertThat(verifyResult, is("success"));
   }
@@ -101,17 +96,6 @@ public class EmailVerificationServiceImplTestForVerify {
   }
 
   @Test
-  public void should_return_timeout_when_verify_time_too_late() throws Exception {
-    long createTime = 1L;
-    EmailVerifier mockVerifier = mock(EmailVerifier.class);
-    when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
-    when(emailVerifierRepo.findByEmail(email)).thenReturn(mockVerifier);
-    when(mockVerifier.getCreateTime()).thenReturn(createTime);
-    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
-    assertThat(verifyResult, is("timeout"));
-  }
-
-  @Test
   public void should_return_unauthorized_when_user_and_email_not_match() throws Exception {
     String anotherEmail = "anotherEmail";
     EmailVerifier emailVerifier = mock(EmailVerifier.class);
@@ -121,12 +105,52 @@ public class EmailVerificationServiceImplTestForVerify {
     when(user.getEmail()).thenReturn(anotherEmail);
 
     when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
-    when(emailVerifierRepo.findByEmail(email)).thenReturn(emailVerifier);
-    when(passwordService.match(anyString(), anyString())).thenReturn(true);
     when(userRepo.findByUsername(username)).thenReturn(user);
 
     String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
 
+    assertThat(verifyResult, is("unauthorized"));
+  }
+
+  @Test
+  public void should_return_email_not_found_when_email_not_exist_in_email_verifier_table() throws Exception {
+    when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
+    User user = mock(User.class);
+    when(user.getEmail()).thenReturn(email);
+    when(userRepo.findByUsername(username)).thenReturn(user);
+    when(emailVerifierRepo.findByEmail(email)).thenReturn(null);
+    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    assertThat(verifyResult, is("email not found"));
+  }
+
+  @Test
+  public void should_return_timeout_when_verify_time_too_late() throws Exception {
+    long createTime = 1L;
+    EmailVerifier mockVerifier = mock(EmailVerifier.class);
+    when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
+    User user = mock(User.class);
+    when(user.getEmail()).thenReturn(email);
+    when(userRepo.findByUsername(username)).thenReturn(user);
+    when(emailVerifierRepo.findByEmail(email)).thenReturn(mockVerifier);
+    when(mockVerifier.getCreateTime()).thenReturn(createTime);
+    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    assertThat(verifyResult, is("timeout"));
+  }
+
+  @Test
+  public void should_return_unauthorized_when_verifyToken_not_match_savedToken() throws Exception {
+    String savedToken = "savedToken";
+    when(loginService.checkState(username, userToken)).thenReturn(ONLINE);
+    User user = mock(User.class);
+    when(user.getEmail()).thenReturn(email);
+    when(userRepo.findByUsername(username)).thenReturn(user);
+    EmailVerifier emailVerifier = mock(EmailVerifier.class);
+    when(emailVerifier.getCreateTime()).thenReturn(System.currentTimeMillis());
+    when(emailVerifier.getToken()).thenReturn(savedToken);
+    when(emailVerifier.getId()).thenReturn("id");
+    when(emailVerifierRepo.findByEmail(email)).thenReturn(emailVerifier);
+    when(passwordService.match(verifyToken, savedToken)).thenReturn(false);
+    String verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
     assertThat(verifyResult, is("unauthorized"));
   }
 }

@@ -79,7 +79,13 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     if (userState.equals(OFFLINE)) {
       return "unauthorized";
     }
+    if (!userRepo.findByUsername(username).getEmail().equals(email)) {
+      return "unauthorized";
+    }
     EmailVerifier emailVerifier = emailVerifierRepo.findByEmail(email);
+    if (emailVerifier == null) {
+      return "email not found";
+    }
     if (emailVerifier.getCreateTime() + 30 * 60 * 1000 - System.currentTimeMillis() < 0) {
       return "timeout";
     }
@@ -87,11 +93,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     if (!isMatch) {
       return "unauthorized";
     }
-    if (!userRepo.findByUsername(username).getEmail().equals(email)) {
-      return "unauthorized";
-    }
     userRepo.enableEmailByUsername(username);
-    emailVerifierRepo.delete(emailVerifier);
+    emailVerifierRepo.delete(emailVerifier.getId());
     return "success";
   }
 }
