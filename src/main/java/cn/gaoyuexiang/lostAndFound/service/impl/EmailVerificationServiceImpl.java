@@ -27,6 +27,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
   private final EmailService emailService;
   private final LoginService loginService;
   private PasswordService passwordService;
+  private TimeService timeService;
 
   @Autowired
   public EmailVerificationServiceImpl(UserRepo userRepo,
@@ -36,7 +37,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
                                       EmailFormatService emailFormatService,
                                       EmailService emailService,
                                       LoginService loginService,
-                                      PasswordService passwordService) {
+                                      PasswordService passwordService,
+                                      TimeService timeService) {
     this.userRepo = userRepo;
     this.emailVerifierRepo = emailVerifierRepo;
     this.idCreatorService = idCreatorService;
@@ -45,6 +47,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     this.emailService = emailService;
     this.loginService = loginService;
     this.passwordService = passwordService;
+    this.timeService = timeService;
   }
 
   @Override
@@ -61,8 +64,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
       return UNAUTHORIZED;
     }
     String emailToken = tokenService.buildToken();
-    long createTime = System.currentTimeMillis();
-    long expireTime = createTime + 30 * 60 * 1000;
+    long createTime = timeService.now();
+    long expireTime = timeService.getExpireTime(createTime);
     EmailVerifier emailVerifier = new EmailVerifier();
     emailVerifier.setId(idCreatorService.create());
     emailVerifier.setEmail(email);
@@ -87,7 +90,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     if (emailVerifier == null) {
       return EMAIL_NOT_FOUND;
     }
-    if (emailVerifier.getCreateTime() + 30 * 60 * 1000 - System.currentTimeMillis() < 0) {
+    if (timeService.isExpire(emailVerifier.getCreateTime())) {
       return TOKEN_TIMEOUT;
     }
     boolean isMatch = passwordService.match(verifyToken, emailVerifier.getToken());
