@@ -1,6 +1,7 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserEmailController;
+import cn.gaoyuexiang.lostAndFound.enums.EmailVerifyMsg;
 import cn.gaoyuexiang.lostAndFound.model.dto.EmailToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.service.EmailVerificationService;
@@ -30,14 +31,16 @@ public class EmailController {
   public ResponseEntity<Message> apply(@PathVariable("email") String email,
                                        @RequestHeader(name = "user-token") String token) {
     try {
-      String result = emailVerificationService.apply(email, token);
+      EmailVerifyMsg result = emailVerificationService.apply(email, token);
       switch (result) {
-        case "success":
-          return new ResponseEntity<>(new Message(result), OK);
-        case "unauthorized":
-          return new ResponseEntity<>(new Message(result), UNAUTHORIZED);
-        case "user not found":
-          return new ResponseEntity<>(new Message(result), NOT_FOUND);
+        case SUCCESS:
+          return new ResponseEntity<>(new Message(result.name()), OK);
+        case UNAUTHORIZED:
+          return new ResponseEntity<>(new Message(result.name()), UNAUTHORIZED);
+        case EMAIL_NOT_FOUND:
+          return new ResponseEntity<>(new Message(result.name()), NOT_FOUND);
+        case EMAIL_ENABLED:
+          return new ResponseEntity<>(new Message(result.name()), CONFLICT);
       }
     } catch (MessagingException e) {
       return new ResponseEntity<>(new Message("something wrong"), INTERNAL_SERVER_ERROR);

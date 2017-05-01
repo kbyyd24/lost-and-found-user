@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.EmailVerifierRepo;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.enums.EmailVerifyMsg;
 import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.persistence.EmailVerifier;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
@@ -46,14 +47,17 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
   }
 
   @Override
-  public String apply(String email, String token) throws MessagingException {
+  public EmailVerifyMsg apply(String email, String token) throws MessagingException {
     User user = userRepo.findByEmail(email);
     if (user == null) {
-      return "user not found";
+      return EmailVerifyMsg.EMAIL_NOT_FOUND;
+    }
+    if (user.getEmailEnable()) {
+      return EmailVerifyMsg.EMAIL_ENABLED;
     }
     UserState userState = loginService.checkState(user.getUsername(), token);
     if (userState.equals(OFFLINE)) {
-      return "unauthorized";
+      return EmailVerifyMsg.UNAUTHORIZED;
     }
     String emailToken = tokenService.buildToken();
     long createTime = System.currentTimeMillis();
@@ -66,7 +70,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     emailVerifierRepo.save(emailVerifier);
     String emailText = emailFormatService.format(user.getUsername(), emailToken, expireTime);
     emailService.send(email, emailText);
-    return "success";
+    return EmailVerifyMsg.SUCCESS;
   }
 
   @Override
