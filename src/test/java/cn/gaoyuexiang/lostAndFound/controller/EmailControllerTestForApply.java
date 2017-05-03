@@ -24,7 +24,7 @@ import static org.springframework.http.HttpStatus.*;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class EmailControllerTestForApply {
 
-  public static final String URI_FORMAT = "/user/email/%s/verification/application";
+  private static final String URI_FORMAT = "/user/email/%s/verification/application";
   @Autowired
   private TestRestTemplate restTemplate;
 

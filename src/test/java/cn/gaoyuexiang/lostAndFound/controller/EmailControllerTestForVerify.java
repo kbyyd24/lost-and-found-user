@@ -31,7 +31,6 @@ public class EmailControllerTestForVerify {
   @MockBean
   private EmailVerificationService service;
 
-  private static String PATH = "/user/email/email/verification";
   private String email;
   private String username;
   private String userToken;
@@ -81,6 +80,7 @@ public class EmailControllerTestForVerify {
     httpHeaders.add("user-token", userToken);
     httpHeaders.add(username, username);
     HttpEntity<EmailToken> requestEntity = new HttpEntity<>(emailToken, httpHeaders);
+    String PATH = "/user/email/email/verification";
     return restTemplate.exchange(PATH, PUT, requestEntity, Message.class);
   }
 }
