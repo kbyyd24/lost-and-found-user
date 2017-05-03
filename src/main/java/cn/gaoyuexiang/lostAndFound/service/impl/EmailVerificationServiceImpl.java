@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
+import java.sql.SQLDataException;
 import java.time.LocalTime;
 
 import static cn.gaoyuexiang.lostAndFound.enums.EmailVerifyMsg.*;
@@ -108,7 +109,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     return null;
   }
 
-  @Transactional
   private void enableEmail(String username, EmailVerifier emailVerifier) {
     userRepo.enableEmailByUsername(username);
     emailVerifierRepo.delete(emailVerifier.getId());
