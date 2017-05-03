@@ -46,6 +46,6 @@ public class UserInfoControllerTestForGetInfo {
     ResponseEntity<Message> entity =
         restTemplate.getForEntity(String.format("/user/info/%s", username), Message.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.NOT_FOUND));
-    assertThat(entity.getBody().getMsg(), is("not found"));
+    assertThat(entity.getBody().getMsg(), is(HttpStatus.NOT_FOUND.name()));
   }
 }

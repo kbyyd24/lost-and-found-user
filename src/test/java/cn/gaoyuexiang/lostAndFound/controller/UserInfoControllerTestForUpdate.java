@@ -52,7 +52,7 @@ public class UserInfoControllerTestForUpdate {
 
   @Test
   public void should_return_200_when_create_success() throws Exception {
-    String success = "success";
+    String success = "OK";
     given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
     doNothing().when(userInfoService).createInfo(any(UserInfoDTO.class), eq(username));
     check(success, OK);

@@ -42,7 +42,7 @@ public class UserInfoController {
       return new ResponseEntity<>(new Message(userState.name()), HttpStatus.NOT_FOUND);
     }
     userInfoService.createInfo(userInfo, username);
-    return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+    return new ResponseEntity<>(new Message(HttpStatus.OK.name()), HttpStatus.OK);
   }
 
   @GetMapping(path = "info/{username}")
@@ -54,6 +54,6 @@ public class UserInfoController {
   @ExceptionHandler(value = UserNotExistException.class)
   @ResponseStatus(value = HttpStatus.NOT_FOUND)
   public Message handleUserNotExist() {
-    return new Message("not found");
+    return new Message(HttpStatus.NOT_FOUND.name());
   }
 }
