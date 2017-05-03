@@ -58,7 +58,6 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
     updater.setEmail(email);
     HttpEntity<SecurityInfoUpdater> requestEntity = new HttpEntity<>(updater, httpHeaders);
 
-    String updateState = "success";
     given(loginService.checkState(eq(username), eq(token))).willReturn(ONLINE);
     doNothing().when(userSecurityInfoService).updateInfo(any(SecurityInfoUpdater.class), eq(username));
 
@@ -66,7 +65,7 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
         restTemplate.exchange(path, HttpMethod.PUT, requestEntity, Message.class);
 
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
-    assertThat(entity.getBody().getMsg(), is(updateState));
+    assertThat(entity.getBody().getMsg(), is(HttpStatus.OK.name()));
   }
 
   @Test
@@ -83,6 +82,6 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
         restTemplate.exchange(path, HttpMethod.PUT, requestEntity, Message.class);
 
     assertThat(entity.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
-    assertThat(entity.getBody().getMsg(), is("unauthorized"));
+    assertThat(entity.getBody().getMsg(), is(HttpStatus.UNAUTHORIZED.name()));
   }
 }

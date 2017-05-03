@@ -53,19 +53,19 @@ public class UserSecurityInfoController {
       throw new UnauthorizedException();
     }
     userSecurityInfoService.updateInfo(updater, username);
-    return new Message("success");
+    return new Message(OK.name());
   }
 
   @ExceptionHandler(value = UnauthorizedException.class)
   @ResponseStatus(UNAUTHORIZED)
   public Message handleUnauthorizedException() {
-    return new Message("unauthorized");
+    return new Message(UNAUTHORIZED.name());
   }
 
   @ExceptionHandler(value = UserNotExistException.class)
   @ResponseStatus(NOT_FOUND)
   public Message handleUserNotExistException() {
-    return new Message("not found");
+    return new Message(NOT_FOUND.name());
   }
 
 }

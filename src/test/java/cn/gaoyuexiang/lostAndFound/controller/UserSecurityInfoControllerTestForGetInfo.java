@@ -73,6 +73,6 @@ public class UserSecurityInfoControllerTestForGetInfo {
         restTemplate.exchange(path, HttpMethod.GET, requestEntity, Message.class);
 
     assertThat(entity.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
-    assertThat(entity.getBody().getMsg(), is("unauthorized"));
+    assertThat(entity.getBody().getMsg(), is(HttpStatus.UNAUTHORIZED.name()));
   }
 }
