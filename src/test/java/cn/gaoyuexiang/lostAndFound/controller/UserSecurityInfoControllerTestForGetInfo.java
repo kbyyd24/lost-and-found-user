@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -68,7 +69,16 @@ public class UserSecurityInfoControllerTestForGetInfo {
   @Test
   public void should_return_401_when_user_is_offline() throws Exception {
     given(loginService.checkState(eq(username), eq(token))).willReturn(OFFLINE);
+    checkUnauthorized();
+  }
 
+  @Test
+  public void should_return_401_when_token_not_match() throws Exception {
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UNAUTHORIZED);
+    checkUnauthorized();
+  }
+
+  private void checkUnauthorized() {
     ResponseEntity<Message> entity =
         restTemplate.exchange(path, HttpMethod.GET, requestEntity, Message.class);
 

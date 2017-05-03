@@ -16,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -70,13 +71,22 @@ public class UserSecurityInfoControllerTestForUpdateInfo {
 
   @Test
   public void should_response_401_when_user_is_offline() throws Exception {
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.OFFLINE);
+    checkUnauthorized();
+  }
+
+  @Test
+  public void should_response_401_when_token_not_match() throws Exception {
+    given(loginService.checkState(eq(username), eq(token))).willReturn(UNAUTHORIZED);
+    checkUnauthorized();
+  }
+
+  private void checkUnauthorized() {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.add("user-token", token);
     SecurityInfoUpdater updater = new SecurityInfoUpdater();
     updater.setEmail(email);
     HttpEntity<SecurityInfoUpdater> requestEntity = new HttpEntity<>(updater, httpHeaders);
-
-    given(loginService.checkState(eq(username), eq(token))).willReturn(UserState.OFFLINE);
 
     ResponseEntity<Message> entity =
         restTemplate.exchange(path, HttpMethod.PUT, requestEntity, Message.class);

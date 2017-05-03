@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.controller;
 
 import cn.gaoyuexiang.lostAndFound.annotation.UserController;
 import cn.gaoyuexiang.lostAndFound.enums.UserState;
+import cn.gaoyuexiang.lostAndFound.exception.OfflineException;
 import cn.gaoyuexiang.lostAndFound.exception.UnauthorizedException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
@@ -38,6 +39,8 @@ public class UserSecurityInfoController {
                                    @RequestHeader("user-token") String token) {
     UserState userState = loginService.checkState(username, token);
     if (userState.equals(OFFLINE)) {
+      throw new OfflineException();
+    } else if (userState.equals(UserState.UNAUTHORIZED)) {
       throw new UnauthorizedException();
     }
     return userSecurityInfoService.getInfo(username);
@@ -50,19 +53,27 @@ public class UserSecurityInfoController {
                                       @RequestHeader("user-token") String token) {
     UserState userState = loginService.checkState(username, token);
     if (userState.equals(OFFLINE)) {
+      throw new OfflineException();
+    } else if (userState.equals(UserState.UNAUTHORIZED)) {
       throw new UnauthorizedException();
     }
     userSecurityInfoService.updateInfo(updater, username);
     return new Message(OK.name());
   }
 
-  @ExceptionHandler(value = UnauthorizedException.class)
+  @ExceptionHandler(OfflineException.class)
+  @ResponseStatus(UNAUTHORIZED)
+  public Message handleOfflineException() {
+    return new Message(UNAUTHORIZED.name());
+  }
+
+  @ExceptionHandler(UnauthorizedException.class)
   @ResponseStatus(UNAUTHORIZED)
   public Message handleUnauthorizedException() {
     return new Message(UNAUTHORIZED.name());
   }
 
-  @ExceptionHandler(value = UserNotExistException.class)
+  @ExceptionHandler(UserNotExistException.class)
   @ResponseStatus(NOT_FOUND)
   public Message handleUserNotExistException() {
     return new Message(NOT_FOUND.name());

@@ -30,6 +30,7 @@ public class EmailController {
     this.responseMap = new HashMap<>();
     this.responseMap.put(EmailVerifyMsg.SUCCESS, OK);
     this.responseMap.put(EmailVerifyMsg.UNAUTHORIZED, UNAUTHORIZED);
+    this.responseMap.put(EmailVerifyMsg.OFFLINE, UNAUTHORIZED);
     this.responseMap.put(EmailVerifyMsg.EMAIL_NOT_FOUND, NOT_FOUND);
     this.responseMap.put(EmailVerifyMsg.EMAIL_ENABLED, CONFLICT);
     this.responseMap.put(EmailVerifyMsg.TOKEN_TIMEOUT, GONE);

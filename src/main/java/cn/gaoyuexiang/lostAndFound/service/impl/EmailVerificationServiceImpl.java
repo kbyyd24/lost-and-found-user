@@ -9,6 +9,7 @@ import cn.gaoyuexiang.lostAndFound.model.persistence.User;
 import cn.gaoyuexiang.lostAndFound.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.time.LocalTime;
@@ -59,10 +60,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     if (user.getEmailEnable()) {
       return EmailVerifyMsg.EMAIL_ENABLED;
     }
-    UserState userState = loginService.checkState(user.getUsername(), token);
-    if (userState.equals(OFFLINE)) {
-      return UNAUTHORIZED;
-    }
+    EmailVerifyMsg x = checkUserState(user.getUsername(), token);
+    if (x != null) return x;
     String emailToken = tokenService.buildToken();
     long createTime = timeService.now();
     long expireTime = timeService.getExpireTime(createTime);
@@ -79,10 +78,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
   @Override
   public EmailVerifyMsg verify(String username, String userToken, String email, String verifyToken) {
-    UserState userState = loginService.checkState(username, userToken);
-    if (userState.equals(OFFLINE)) {
-      return UNAUTHORIZED;
-    }
+    EmailVerifyMsg x = checkUserState(username, userToken);
+    if (x != null) return x;
     if (!userRepo.findByUsername(username).getEmail().equals(email)) {
       return UNAUTHORIZED;
     }
@@ -97,8 +94,23 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     if (!isMatch) {
       return UNAUTHORIZED;
     }
+    enableEmail(username, emailVerifier);
+    return SUCCESS;
+  }
+
+  private EmailVerifyMsg checkUserState(String username, String userToken) {
+    UserState userState = loginService.checkState(username, userToken);
+    if (userState.equals(UserState.UNAUTHORIZED)) {
+      return UNAUTHORIZED;
+    } else if (userState.equals(UserState.OFFLINE)) {
+      return EmailVerifyMsg.OFFLINE;
+    }
+    return null;
+  }
+
+  @Transactional
+  private void enableEmail(String username, EmailVerifier emailVerifier) {
     userRepo.enableEmailByUsername(username);
     emailVerifierRepo.delete(emailVerifier.getId());
-    return SUCCESS;
   }
 }

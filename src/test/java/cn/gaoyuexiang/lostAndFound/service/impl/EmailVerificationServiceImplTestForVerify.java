@@ -82,19 +82,28 @@ public class EmailVerificationServiceImplTestForVerify {
     when(emailVerifier.getCreateTime()).thenReturn(createTime);
     when(emailVerifier.getId()).thenReturn(emailVerifierId);
     when(emailVerifierRepo.findByEmail(email)).thenReturn(emailVerifier);
-    //todo create TimeService
     when(passwordService.match(verifyToken, encodedVerifyToken)).thenReturn(true);
     doNothing().when(userRepo).enableEmailByUsername(username);
     doNothing().when(emailVerifierRepo).delete(emailVerifierId);
-    EmailVerifyMsg verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+    EmailVerifyMsg verifyResult =
+        emailVerificationService.verify(username, userToken, email, verifyToken);
     assertThat(verifyResult, is(SUCCESS));
   }
 
   @Test
-  public void should_return_unauthorized_when_user_is_offline() throws Exception {
-    when(loginService.checkState(username, userToken)).thenReturn(OFFLINE);
-    EmailVerifyMsg verifyResult = emailVerificationService.verify(username, userToken, email, verifyToken);
+  public void should_return_unauthorized_when_token_not_match() throws Exception {
+    when(loginService.checkState(username, userToken)).thenReturn(UserState.UNAUTHORIZED);
+    EmailVerifyMsg verifyResult =
+        emailVerificationService.verify(username, userToken, email, verifyToken);
     assertThat(verifyResult, is(UNAUTHORIZED));
+  }
+
+  @Test
+  public void should_return_offline_when_user_offline() throws Exception {
+    when(loginService.checkState(username, userToken)).thenReturn(OFFLINE);
+    EmailVerifyMsg verifyResult =
+        emailVerificationService.verify(username, userToken, email, verifyToken);
+    assertThat(verifyResult, is(EmailVerifyMsg.OFFLINE));
   }
 
   @Test

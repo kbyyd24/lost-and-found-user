@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
+import static cn.gaoyuexiang.lostAndFound.enums.UserState.UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
@@ -93,12 +94,23 @@ public class EmailVerificationServiceImplTestForApply {
   }
 
   @Test
-  public void should_return_offline_when_token_not_match() throws Exception {
+  public void should_return_offline_when_user_offline() throws Exception {
     String username = "username";
     User user = mock(User.class);
     when(user.getUsername()).thenReturn(username);
     when(userRepo.findByEmail(email)).thenReturn(user);
     when(loginService.checkState(username, token)).thenReturn(OFFLINE);
+    EmailVerifyMsg result = emailVerificationService.apply(email, token);
+    assertThat(result, is(EmailVerifyMsg.OFFLINE));
+  }
+
+  @Test
+  public void should_return_unauthorized_when_token_not_match() throws Exception {
+    String username = "username";
+    User user = mock(User.class);
+    when(user.getUsername()).thenReturn(username);
+    when(userRepo.findByEmail(email)).thenReturn(user);
+    when(loginService.checkState(username, token)).thenReturn(UNAUTHORIZED);
     EmailVerifyMsg result = emailVerificationService.apply(email, token);
     assertThat(result, is(EmailVerifyMsg.UNAUTHORIZED));
   }
