@@ -4,6 +4,7 @@ import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.model.dto.UserInfoDTO;
 import cn.gaoyuexiang.lostAndFound.service.UserInfoService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +29,30 @@ public class UserInfoControllerTestForGetInfo {
   @MockBean
   private UserInfoService userInfoService;
 
+  private String username;
+  private String path;
+
+  @Before
+  public void setUp() throws Exception {
+    username = "username";
+    path = String.format("/user/info/%s", username);
+  }
+
   @Test
   public void should_return_info_when_username_is_exist() throws Exception {
-    String username = "username";
     UserInfoDTO userInfo = new UserInfoDTO();
     given(userInfoService.getInfo(username)).willReturn(userInfo);
     ResponseEntity<UserInfoDTO> entity =
-        restTemplate.getForEntity(String.format("/user/info/%s", username), UserInfoDTO.class);
+        restTemplate.getForEntity(path, UserInfoDTO.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.OK));
     assertThat(entity.getBody(), is(userInfo));
   }
 
   @Test
   public void should_return_404_when_username_is_not_found() throws Exception {
-    String username = "username";
     given(userInfoService.getInfo(username)).willThrow(new UserNotExistException());
     ResponseEntity<Message> entity =
-        restTemplate.getForEntity(String.format("/user/info/%s", username), Message.class);
+        restTemplate.getForEntity(path, Message.class);
     assertThat(entity.getStatusCode(), is(HttpStatus.NOT_FOUND));
     assertThat(entity.getBody().getMsg(), is(HttpStatus.NOT_FOUND.name()));
   }
