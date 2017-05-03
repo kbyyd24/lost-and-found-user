@@ -1,5 +1,6 @@
 package cn.gaoyuexiang.lostAndFound.controller;
 
+import cn.gaoyuexiang.lostAndFound.enums.LoginMsg;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import org.junit.Ignore;
@@ -30,23 +31,20 @@ public class LoginControllerTestForLogout {
 
   @Test
   public void should_response_200_when_logout_success() throws Exception {
-    String logoutSuccess = "logout success";
-    check(logoutSuccess, HttpStatus.OK);
+    check(LoginMsg.LOGOUT_SUCCESS, HttpStatus.OK);
   }
 
   @Test
   public void should_response_401_when_token_not_match() throws Exception {
-    String unauthorized = "unauthorized";
-    check(unauthorized, HttpStatus.UNAUTHORIZED);
+    check(LoginMsg.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
   }
 
   @Test
   public void should_response_404_when_user_is_not_online() throws Exception {
-    String userNotFound = "user not found";
-    check(userNotFound, HttpStatus.NOT_FOUND);
+    check(LoginMsg.OFFLINE, HttpStatus.NOT_FOUND);
   }
 
-  private void check(String msg, HttpStatus status) {
+  private void check(LoginMsg msg, HttpStatus status) {
     String username = "username";
     String token = "token";
     given(loginService.logout(eq(username), eq(token))).willReturn(msg);
@@ -58,7 +56,7 @@ public class LoginControllerTestForLogout {
             new HttpEntity<>(httpHeaders),
             Message.class);
     assertThat(entity.getStatusCode(), is(status));
-    assertThat(entity.getBody().getMsg(), is(msg));
+    assertThat(entity.getBody().getMsg(), is(msg.getMsg()));
   }
 
 }

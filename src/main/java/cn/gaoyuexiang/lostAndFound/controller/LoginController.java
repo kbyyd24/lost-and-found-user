@@ -29,7 +29,7 @@ public class LoginController {
 
   private LoginService loginService;
   private Map<UserState, HttpStatus> stateMap;
-  private Map<String, HttpStatus> logoutResMap;
+  private Map<LoginMsg, HttpStatus> logoutResMap;
 
   @Autowired
   public LoginController(LoginService loginService) {
@@ -41,9 +41,9 @@ public class LoginController {
     stateMap.put(UserState.UNAUTHORIZED, UNAUTHORIZED);
 
     logoutResMap = new HashMap<>();
-    logoutResMap.put("logout success", OK);
-    logoutResMap.put("unauthorized", UNAUTHORIZED);
-    logoutResMap.put("user not found", NOT_FOUND);
+    logoutResMap.put(LoginMsg.LOGOUT_SUCCESS, OK);
+    logoutResMap.put(LoginMsg.UNAUTHORIZED, UNAUTHORIZED);
+    logoutResMap.put(LoginMsg.OFFLINE, NOT_FOUND);
   }
 
   @PostMapping("login")
@@ -73,7 +73,7 @@ public class LoginController {
   @DeleteMapping(value = "login/{username}", headers = "user-token")
   public ResponseEntity<Message> logout(@PathVariable String username,
                                         @RequestHeader(value = "user-token", defaultValue = "") String token) {
-    String logoutMsg = loginService.logout(username, token);
-    return new ResponseEntity<>(new Message(logoutMsg), logoutResMap.get(logoutMsg));
+    LoginMsg logoutMsg = loginService.logout(username, token);
+    return new ResponseEntity<>(new Message(logoutMsg.getMsg()), logoutResMap.get(logoutMsg));
   }
 }

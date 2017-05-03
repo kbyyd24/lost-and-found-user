@@ -2,6 +2,7 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.dao.LoginRepo;
 import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
+import cn.gaoyuexiang.lostAndFound.enums.LoginMsg;
 import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.exception.MissParamException;
 import cn.gaoyuexiang.lostAndFound.exception.PasswordNotMatchException;
@@ -117,17 +118,17 @@ public class LoginServiceImpl implements LoginService {
   }
 
   @Override
-  public String logout(String username, String token) {
+  public LoginMsg logout(String username, String token) {
+    UserState userState = this.checkState(username, token);
+    switch (userState) {
+      case OFFLINE:
+        return LoginMsg.OFFLINE;
+      case UNAUTHORIZED:
+        return LoginMsg.UNAUTHORIZED;
+    }
     Login login = loginRepo.findByUsername(username);
-    if (login == null) {
-      return "user not found";
-    }
-    boolean isMatch = passwordService.match(token, login.getToken());
-    if (!isMatch) {
-      return "user not found";
-    }
     loginRepo.delete(login);
-    return "logout success";
+    return LoginMsg.LOGOUT_SUCCESS;
   }
 
 }

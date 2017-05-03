@@ -2,6 +2,8 @@ package cn.gaoyuexiang.lostAndFound.service.impl;
 
 import cn.gaoyuexiang.lostAndFound.LostAndFoundUserApplication;
 import cn.gaoyuexiang.lostAndFound.dao.LoginRepo;
+import cn.gaoyuexiang.lostAndFound.enums.LoginMsg;
+import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.model.persistence.Login;
 import cn.gaoyuexiang.lostAndFound.service.LoginService;
 import cn.gaoyuexiang.lostAndFound.service.PasswordService;
@@ -32,48 +34,42 @@ public class LoginServiceImplTestForLogout {
   @MockBean
   private PasswordService passwordService;
 
+  private String username;
+  private String token;
+
   @Before
   public void setUp() throws Exception {
-    loginService = new LoginServiceImpl(loginRepo, null, passwordService, null, null);
+    username = "username";
+    token = "token";
   }
 
   @Test
-  public void should_return_logout_success_when_given_valid_user_and_token() throws Exception {
-    String username = "username";
-    String token = "token";
-    String expectLogout = "logout success";
+  public void should_return_logout_success_when_user_is_online() throws Exception {
     Login login = new Login();
     login.setToken(token);
     when(loginRepo.findByUsername(username)).thenReturn(login);
     when(passwordService.match(token, token)).thenReturn(true);
     doNothing().when(loginRepo).delete(login);
-
-    String logoutMsg = loginService.logout(username, token);
-
-    assertThat(logoutMsg, is(expectLogout));
+    checkResult(LoginMsg.LOGOUT_SUCCESS);
   }
 
   @Test
-  public void should_return_offline_when_username_and_token_not_matched() throws Exception {
-    String token = "token";
-    String username = "username";
+  public void should_return_unauthorized_when_username_and_token_not_matched() throws Exception {
     Login login = Mockito.mock(Login.class);
     when(login.getToken()).thenReturn(token);
     when(loginRepo.findByUsername(username)).thenReturn(login);
     when(passwordService.match(token, token)).thenReturn(false);
-
-    String logoutMsg = loginService.logout(username, token);
-
-    String userNotFound = "user not found";
-    assertThat(logoutMsg, is(userNotFound));
+    checkResult(LoginMsg.UNAUTHORIZED);
   }
 
   @Test
-  public void should_return_user_not_found_when_user_is_offline() throws Exception {
-    String username = "username";
+  public void should_return_offline_when_user_is_offline() throws Exception {
     when(loginRepo.findByUsername(username)).thenReturn(null);
-    String logoutMsg = loginService.logout(username, "token");
-    String userNotFound = "user not found";
-    assertThat(logoutMsg, is(userNotFound));
+    checkResult(LoginMsg.OFFLINE);
+  }
+
+  private void checkResult(LoginMsg expectLogout) {
+    LoginMsg msg = loginService.logout(username, token);
+    assertThat(msg, is(expectLogout));
   }
 }
