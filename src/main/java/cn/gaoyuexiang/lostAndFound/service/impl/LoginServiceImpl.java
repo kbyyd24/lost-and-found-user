@@ -7,6 +7,7 @@ import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.exception.MissParamException;
 import cn.gaoyuexiang.lostAndFound.exception.PasswordNotMatchException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
+import cn.gaoyuexiang.lostAndFound.model.dto.LoginResponse;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginUser;
 import cn.gaoyuexiang.lostAndFound.model.persistence.Login;
@@ -48,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
   }
 
   @Override
-  public LoginToken login(LoginUser loginUser) {
+  public LoginResponse login(LoginUser loginUser) {
     this.checkComplete(loginUser);
     User user = this.loadUserByName(loginUser.getLoginName());
     this.checkPassword(loginUser.getPassword(), user.getPassword());
@@ -58,7 +59,7 @@ public class LoginServiceImpl implements LoginService {
     String token = onlineUser == null ?
         saveOnlineUser(username, loginTime) :
         updateOnlineUser(onlineUser, loginTime);
-    return new LoginToken(token);
+    return new LoginResponse(user.getUsername(), user.getEmail(), token);
   }
 
   private void checkComplete(LoginUser loginUser) {

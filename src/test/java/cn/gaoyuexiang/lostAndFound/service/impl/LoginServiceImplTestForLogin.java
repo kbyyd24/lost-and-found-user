@@ -6,6 +6,7 @@ import cn.gaoyuexiang.lostAndFound.dao.UserRepo;
 import cn.gaoyuexiang.lostAndFound.exception.MissParamException;
 import cn.gaoyuexiang.lostAndFound.exception.PasswordNotMatchException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
+import cn.gaoyuexiang.lostAndFound.model.dto.LoginResponse;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginUser;
 import cn.gaoyuexiang.lostAndFound.model.persistence.User;
@@ -92,17 +93,19 @@ public class LoginServiceImplTestForLogin {
     loginUser.setLoginName(username);
     loginUser.setPassword(password);
     String tokenMsg = "token";
-    LoginToken expectToken = new LoginToken(tokenMsg);
+    String email = "email";
+    LoginResponse expectToken = new LoginResponse(username, email, tokenMsg);
 
     User user = mock(User.class);
     when(user.getPassword()).thenReturn(password);
     when(user.getUsername()).thenReturn(username);
+    when(user.getEmail()).thenReturn(email);
 
     when(userRepo.findByUsernameOrEmail(username, username)).thenReturn(user);
     when(passwordService.match(password, password)).thenReturn(true);
     when(tokenService.buildToken()).thenReturn(tokenMsg);
 
-    LoginToken token = loginService.login(loginUser);
+    LoginResponse token = loginService.login(loginUser);
     assertThat(token, is(expectToken));
   }
 }

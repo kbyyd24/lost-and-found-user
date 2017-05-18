@@ -3,6 +3,7 @@ package cn.gaoyuexiang.lostAndFound.controller;
 import cn.gaoyuexiang.lostAndFound.exception.MissParamException;
 import cn.gaoyuexiang.lostAndFound.exception.PasswordNotMatchException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
+import cn.gaoyuexiang.lostAndFound.model.dto.LoginResponse;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
@@ -36,7 +37,7 @@ public class LoginControllerTestForLogin {
 
   @Test
   public void should_return_200_when_given_a_valid_user() throws Exception {
-    given(loginService.login(any(LoginUser.class))).willReturn(new LoginToken("token"));
+    given(loginService.login(any(LoginUser.class))).willReturn(new LoginResponse());
     LoginUser loginUser = new LoginUser();
 
     ResponseEntity<LoginToken> entity = restTemplate.postForEntity("/user/login", loginUser, LoginToken.class);

@@ -5,6 +5,7 @@ import cn.gaoyuexiang.lostAndFound.enums.UserState;
 import cn.gaoyuexiang.lostAndFound.exception.MissParamException;
 import cn.gaoyuexiang.lostAndFound.exception.PasswordNotMatchException;
 import cn.gaoyuexiang.lostAndFound.exception.UserNotExistException;
+import cn.gaoyuexiang.lostAndFound.model.dto.LoginResponse;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginToken;
 import cn.gaoyuexiang.lostAndFound.model.dto.LoginUser;
 import cn.gaoyuexiang.lostAndFound.model.dto.Message;
@@ -47,7 +48,7 @@ public class LoginController {
   }
 
   @PostMapping("login")
-  public LoginToken login(@RequestBody LoginUser loginUser) {
+  public LoginResponse login(@RequestBody LoginUser loginUser) {
     return loginService.login(loginUser);
   }
 
