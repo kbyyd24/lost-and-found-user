@@ -65,8 +65,8 @@ public class UserCreatorServiceImpl implements UserCreatorService {
 
   private boolean isComplete(SignInUser signInUser) {
     return signInUser != null &&
-        signInUser.getUsername() != null &&
-        signInUser.getEmail() != null &&
-        signInUser.getPassword() != null;
+        signInUser.getUsername() != null && !signInUser.getUsername().isEmpty() &&
+        signInUser.getEmail() != null && !signInUser.getEmail().isEmpty() &&
+        signInUser.getPassword() != null && !signInUser.getPassword().isEmpty();
   }
 }
