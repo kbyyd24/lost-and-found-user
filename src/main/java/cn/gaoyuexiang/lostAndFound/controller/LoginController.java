@@ -25,6 +25,7 @@ import static cn.gaoyuexiang.lostAndFound.enums.UserState.OFFLINE;
 import static cn.gaoyuexiang.lostAndFound.enums.UserState.ONLINE;
 import static org.springframework.http.HttpStatus.*;
 
+@CrossOrigin(origins = "*")
 @UserController
 public class LoginController {
 

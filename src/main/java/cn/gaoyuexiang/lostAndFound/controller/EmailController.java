@@ -17,6 +17,7 @@ import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
 
+@CrossOrigin(origins = "*")
 @UserEmailController
 public class EmailController {
 
